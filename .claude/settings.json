@@ -1,0 +1,27 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "permissions": {
+    "allow": [
+      "mcp__xcodebuildmcp__*",
+      "Read",
+      "Write",
+      "Edit",
+      "Bash(git *)",
+      "Bash(swift *)",
+      "Bash(xcodegen *)",
+      "Bash(xcrun simctl *)",
+      "WebFetch"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Write(.env*)",
+      "Bash(rm -rf *)"
+    ]
+  },
+  "env": {
+    "PROJECT_NAME": "SimplyGurbani",
+    "DEFAULT_SIMULATOR": "iPhone 15",
+    "SWIFT_VERSION": "6.0",
+    "IOS_DEPLOYMENT_TARGET": "17.0"
+  }
+}
