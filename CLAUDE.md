@@ -122,8 +122,17 @@ NavigationStack(path: $router.browsePath) {
 - [x] SwiftData persistence models (BookmarkedVerse, CachedShabad, etc.)
 - [x] Bookmarks feature with folders
 - [x] Enhanced Settings with typography controls
-- [ ] Offline caching implementation
-- [ ] Unit tests
+- [x] Offline caching with cache-first strategy
+- [x] Unit tests (34 tests passing)
+- [ ] UI/UX testing and polish
+
+## Recent Changes (v0.4.0)
+- Added CacheService for SwiftData-based offline caching
+- Implemented cache-first loading strategy in GurbaniService
+- Background refresh keeps cached content up-to-date
+- Offline mode detection with fallback to expired cache
+- Cache stats display in Settings
+- Added comprehensive unit tests for ViewModels and Services
 
 ## Recent Changes (v0.3.0)
 - Added SwiftData container with persistence models
@@ -138,3 +147,9 @@ NavigationStack(path: $router.browsePath) {
 - Reader views fetch actual shabad/bani content
 - Search implemented with first-letter and full-word modes
 - All data models created matching BaniDB API structure
+
+## Next Steps
+- Test all app functionality on device/simulator
+- Verify UI displays correctly across different screen sizes
+- Test menu interactions and navigation flows
+- Polish UI/UX based on testing results
