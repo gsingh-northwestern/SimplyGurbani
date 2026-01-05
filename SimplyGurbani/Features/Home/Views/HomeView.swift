@@ -2,12 +2,13 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(AppRouter.self) private var router
+    @State private var viewModel = HomeViewModel()
 
     var body: some View {
         ScrollView {
             VStack(spacing: AppTheme.Spacing.xl) {
                 // Hukamnama Card
-                HukamnamaCard()
+                HukamnamaCard(viewModel: viewModel)
                     .padding(.horizontal)
 
                 // Quick Access Section
@@ -25,21 +26,25 @@ struct HomeView: View {
                         .font(AppTheme.Typography.title3)
                         .padding(.horizontal)
 
-                    // Placeholder for recent items
-                    GlassCard {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Japji Sahib")
-                                    .font(AppTheme.Typography.headline)
-                                Text("Pauri 15")
-                                    .font(AppTheme.Typography.subheadline)
+                    Button {
+                        router.navigateToBani(WellKnownBani.japjiSahib.rawValue)
+                    } label: {
+                        GlassCard {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Japji Sahib")
+                                        .font(AppTheme.Typography.headline)
+                                    Text("Start reading")
+                                        .font(AppTheme.Typography.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
                                     .foregroundStyle(.secondary)
                             }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.secondary)
                         }
                     }
+                    .buttonStyle(.plain)
                     .padding(.horizontal)
                 }
             }
@@ -47,15 +52,23 @@ struct HomeView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Simply Gurbani")
+        .task {
+            await viewModel.loadHukamnama()
+        }
     }
 }
 
 struct HukamnamaCard: View {
     @Environment(AppRouter.self) private var router
+    let viewModel: HomeViewModel
 
     var body: some View {
         Button {
-            router.homePath.append(.hukamnamaReader())
+            if let shabadID = viewModel.hukamnama?.shabadID {
+                router.homePath.append(.shabadReader(shabadID: shabadID))
+            } else {
+                router.homePath.append(.hukamnamaReader())
+            }
         } label: {
             GlassCard {
                 VStack(spacing: AppTheme.Spacing.md) {
@@ -63,9 +76,14 @@ struct HukamnamaCard: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Today's Hukamnama")
                                 .font(AppTheme.Typography.headline)
-                            Text("Sri Harmandir Sahib")
-                                .font(AppTheme.Typography.caption)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 4) {
+                                Text("Sri Harmandir Sahib")
+                                if let ang = viewModel.hukamnama?.ang {
+                                    Text("• Ang \(ang)")
+                                }
+                            }
+                            .font(AppTheme.Typography.caption)
+                            .foregroundStyle(.secondary)
                         }
                         Spacer()
                         Image(systemName: "sun.max.fill")
@@ -75,12 +93,39 @@ struct HukamnamaCard: View {
 
                     Divider()
 
-                    // Placeholder Gurmukhi text
-                    Text("Loading Hukamnama...")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
+                    // Hukamnama content
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, AppTheme.Spacing.lg)
+                    } else if let hukamnama = viewModel.hukamnama {
+                        VStack(spacing: AppTheme.Spacing.sm) {
+                            Text(hukamnama.gurmukhi)
+                                .font(.system(size: 18))
+                                .lineLimit(3)
+                                .multilineTextAlignment(.center)
+
+                            if let transliteration = hukamnama.transliteration {
+                                Text(transliteration)
+                                    .font(AppTheme.Typography.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.center)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, AppTheme.Spacing.sm)
+                    } else if viewModel.error != nil {
+                        VStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .foregroundStyle(.secondary)
+                            Text("Unable to load Hukamnama")
+                                .font(AppTheme.Typography.caption)
+                                .foregroundStyle(.secondary)
+                        }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AppTheme.Spacing.lg)
+                    }
                 }
             }
         }
@@ -91,13 +136,13 @@ struct HukamnamaCard: View {
 struct QuickAccessGrid: View {
     @Environment(AppRouter.self) private var router
 
-    let banis: [(id: Int, name: String, icon: String)] = [
-        (1, "Japji Sahib", "sunrise"),
-        (2, "Rehras Sahib", "sunset"),
-        (3, "Kirtan Sohila", "moon.stars"),
-        (20, "Sukhmani Sahib", "heart.circle"),
-        (21, "Anand Sahib", "sparkles"),
-        (22, "Asa di Var", "music.note")
+    let banis: [WellKnownBani] = [
+        .japjiSahib,
+        .rehrasSahib,
+        .kirtanSohila,
+        .sukhmaniSahib,
+        .anandSahib,
+        .asaDiVar
     ]
 
     var body: some View {
@@ -106,9 +151,9 @@ struct QuickAccessGrid: View {
             GridItem(.flexible()),
             GridItem(.flexible())
         ], spacing: AppTheme.Spacing.md) {
-            ForEach(banis, id: \.id) { bani in
+            ForEach(banis, id: \.rawValue) { bani in
                 Button {
-                    router.navigateToBani(bani.id)
+                    router.navigateToBani(bani.rawValue)
                 } label: {
                     GlassCard(padding: AppTheme.Spacing.md) {
                         VStack(spacing: AppTheme.Spacing.sm) {
@@ -116,7 +161,7 @@ struct QuickAccessGrid: View {
                                 .font(.title2)
                                 .foregroundStyle(AppTheme.Colors.saffronFallback)
 
-                            Text(bani.name)
+                            Text(bani.displayName)
                                 .font(AppTheme.Typography.caption)
                                 .lineLimit(2)
                                 .multilineTextAlignment(.center)

@@ -3,85 +3,254 @@ import SwiftUI
 struct ReaderView: View {
     let shabadID: Int
     @Environment(AppRouter.self) private var router
-    @AppStorage("showGurmukhi") private var showGurmukhi = true
-    @AppStorage("showTransliteration") private var showTransliteration = true
-    @AppStorage("showEnglish") private var showEnglish = true
-    @AppStorage("gurmukhiFontSize") private var gurmukhiFontSize = 24.0
+    @State private var viewModel = ReaderViewModel()
 
     var body: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView("Loading...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let error = viewModel.error {
+                ContentUnavailableView {
+                    Label("Error", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(error.localizedDescription)
+                } actions: {
+                    Button("Try Again") {
+                        Task { await viewModel.loadShabad(id: shabadID) }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(AppTheme.Colors.saffronFallback)
+                }
+            } else {
+                readerContent
+            }
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle(viewModel.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                toolbarMenu
+            }
+        }
+        .task {
+            await viewModel.loadShabad(id: shabadID)
+        }
+    }
+
+    private var readerContent: some View {
         ScrollView {
             LazyVStack(spacing: AppTheme.Spacing.lg) {
-                // Placeholder content
-                ForEach(0..<5, id: \.self) { index in
+                // Header
+                if let shabad = viewModel.shabad {
+                    headerView(shabad: shabad)
+                }
+
+                // Verses
+                ForEach(viewModel.verses) { verse in
                     VerseCardView(
-                        gurmukhi: "ਸਤਿ ਨਾਮੁ ਕਰਤਾ ਪੁਰਖੁ ਨਿਰਭਉ ਨਿਰਵੈਰੁ",
-                        transliteration: "Sat Naam Kartaa Purakh Nirbhau Nirvair",
-                        translation: "True is His Name, Creative His Personality, without fear, without enmity.",
-                        showGurmukhi: showGurmukhi,
-                        showTransliteration: showTransliteration,
-                        showTranslation: showEnglish,
-                        gurmukhiFontSize: gurmukhiFontSize
+                        verse: verse,
+                        showGurmukhi: viewModel.showGurmukhi,
+                        showTransliteration: viewModel.showTransliteration,
+                        showTranslation: viewModel.showTranslation,
+                        useLarivaar: viewModel.useLarivaar
+                    )
+                }
+
+                // Footer
+                if let shabad = viewModel.shabad {
+                    footerView(shabad: shabad)
+                }
+            }
+            .padding()
+        }
+    }
+
+    private func headerView(shabad: Shabad) -> some View {
+        GlassCard {
+            VStack(spacing: AppTheme.Spacing.sm) {
+                if let raag = shabad.raag {
+                    Text(raag.gurmukhiUnicode)
+                        .font(.system(size: 18))
+                        .foregroundStyle(AppTheme.Colors.goldFallback)
+
+                    Text(raag.english)
+                        .font(AppTheme.Typography.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack {
+                    Label("Ang \(shabad.ang)", systemImage: "book")
+
+                    if let writer = shabad.writer {
+                        Spacer()
+                        Text(writer.english)
+                    }
+                }
+                .font(AppTheme.Typography.caption)
+                .foregroundStyle(.tertiary)
+            }
+        }
+    }
+
+    private func footerView(shabad: Shabad) -> some View {
+        VStack(spacing: AppTheme.Spacing.md) {
+            Divider()
+
+            Text("\(shabad.sourceName) - Ang \(shabad.ang)")
+                .font(AppTheme.Typography.footnote)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, AppTheme.Spacing.xl)
+    }
+
+    private var toolbarMenu: some View {
+        Menu {
+            Toggle("Gurmukhi", isOn: $viewModel.showGurmukhi)
+            Toggle("Transliteration", isOn: $viewModel.showTransliteration)
+            Toggle("Translation", isOn: $viewModel.showTranslation)
+            Toggle("Larivaar", isOn: $viewModel.useLarivaar)
+
+            Divider()
+
+            ShareLink(item: viewModel.shareText()) {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+    }
+}
+
+struct BaniReaderView: View {
+    let baniID: Int
+    @Environment(AppRouter.self) private var router
+    @State private var viewModel = ReaderViewModel()
+
+    var body: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView("Loading...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let error = viewModel.error {
+                ContentUnavailableView {
+                    Label("Error", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(error.localizedDescription)
+                } actions: {
+                    Button("Try Again") {
+                        Task { await viewModel.loadBani(id: baniID) }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(AppTheme.Colors.saffronFallback)
+                }
+            } else {
+                baniContent
+            }
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle(viewModel.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                toolbarMenu
+            }
+        }
+        .task {
+            await viewModel.loadBani(id: baniID)
+        }
+    }
+
+    private var baniContent: some View {
+        ScrollView {
+            LazyVStack(spacing: AppTheme.Spacing.lg) {
+                // Header
+                if let bani = viewModel.baniContent {
+                    GlassCard {
+                        VStack(spacing: AppTheme.Spacing.sm) {
+                            Text(bani.nameUnicode)
+                                .font(.system(size: 24))
+                                .foregroundStyle(AppTheme.Colors.saffronFallback)
+
+                            if let translit = bani.transliteration {
+                                Text(translit)
+                                    .font(AppTheme.Typography.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Text("\(bani.verses.count) verses")
+                                .font(AppTheme.Typography.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+
+                // Verses
+                ForEach(viewModel.verses) { verse in
+                    VerseCardView(
+                        verse: verse,
+                        showGurmukhi: viewModel.showGurmukhi,
+                        showTransliteration: viewModel.showTransliteration,
+                        showTranslation: viewModel.showTranslation,
+                        useLarivaar: viewModel.useLarivaar
                     )
                 }
             }
             .padding()
         }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Shabad \(shabadID)")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Toggle("Gurmukhi", isOn: $showGurmukhi)
-                    Toggle("Transliteration", isOn: $showTransliteration)
-                    Toggle("English", isOn: $showEnglish)
+    }
 
-                    Divider()
+    private var toolbarMenu: some View {
+        Menu {
+            Toggle("Gurmukhi", isOn: $viewModel.showGurmukhi)
+            Toggle("Transliteration", isOn: $viewModel.showTransliteration)
+            Toggle("Translation", isOn: $viewModel.showTranslation)
+            Toggle("Larivaar", isOn: $viewModel.useLarivaar)
 
-                    Button {
-                        // Share action
-                    } label: {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                    }
+            Divider()
 
-                    Button {
-                        // Bookmark action
-                    } label: {
-                        Label("Bookmark", systemImage: "bookmark")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
+            ShareLink(item: viewModel.shareText()) {
+                Label("Share", systemImage: "square.and.arrow.up")
             }
+        } label: {
+            Image(systemName: "ellipsis.circle")
         }
     }
 }
 
 struct VerseCardView: View {
-    let gurmukhi: String
-    let transliteration: String
-    let translation: String
+    let verse: Verse
     let showGurmukhi: Bool
     let showTransliteration: Bool
     let showTranslation: Bool
-    let gurmukhiFontSize: CGFloat
+    let useLarivaar: Bool
+
+    @AppStorage("gurmukhiFontSize") private var gurmukhiFontSize = 24.0
 
     var body: some View {
         GlassCard {
             VStack(spacing: AppTheme.Spacing.md) {
                 if showGurmukhi {
-                    Text(gurmukhi)
-                        .gurmukhiStyle(size: gurmukhiFontSize)
+                    Text(useLarivaar ? (verse.larivaarUnicode ?? verse.gurmukhiUnicode) : verse.gurmukhiUnicode)
+                        .font(.system(size: gurmukhiFontSize))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(gurmukhiFontSize * 0.4)
                 }
 
-                if showTransliteration {
-                    Text(transliteration)
-                        .transliterationStyle()
+                if showTransliteration, let translit = verse.transliteration {
+                    Text(translit)
+                        .font(.system(size: 16, weight: .regular, design: .serif))
+                        .italic()
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
 
-                if showTranslation {
+                if showTranslation, let translation = verse.translation {
                     Text(translation)
-                        .translationStyle()
+                        .font(.system(size: 15))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -89,55 +258,85 @@ struct VerseCardView: View {
     }
 }
 
-struct BaniReaderView: View {
-    let baniID: Int
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: AppTheme.Spacing.lg) {
-                Text("Loading Bani \(baniID)...")
-                    .foregroundStyle(.secondary)
-            }
-            .padding()
-        }
-        .navigationTitle("Bani")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 struct HukamnamaDetailView: View {
+    @State private var viewModel = HomeViewModel()
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: AppTheme.Spacing.lg) {
-                // Header
-                GlassCard {
-                    VStack(spacing: AppTheme.Spacing.sm) {
-                        Text("Today's Hukamnama")
-                            .font(AppTheme.Typography.title2)
+        Group {
+            if viewModel.isLoading {
+                ProgressView("Loading Hukamnama...")
+            } else if let hukamnama = viewModel.hukamnama {
+                ScrollView {
+                    VStack(spacing: AppTheme.Spacing.lg) {
+                        // Header
+                        GlassCard {
+                            VStack(spacing: AppTheme.Spacing.sm) {
+                                Text("Today's Hukamnama")
+                                    .font(AppTheme.Typography.title2)
 
-                        Text(Date.now.formatted(date: .complete, time: .omitted))
-                            .font(AppTheme.Typography.subheadline)
-                            .foregroundStyle(.secondary)
+                                Text(hukamnama.date.formatted(date: .complete, time: .omitted))
+                                    .font(AppTheme.Typography.subheadline)
+                                    .foregroundStyle(.secondary)
 
-                        Text("Sri Harmandir Sahib, Amritsar")
-                            .font(AppTheme.Typography.caption)
-                            .foregroundStyle(.tertiary)
+                                Text("Sri Harmandir Sahib, Amritsar")
+                                    .font(AppTheme.Typography.caption)
+                                    .foregroundStyle(.tertiary)
+
+                                Text("Ang \(hukamnama.ang)")
+                                    .font(AppTheme.Typography.caption)
+                                    .foregroundStyle(AppTheme.Colors.goldFallback)
+                            }
+                        }
+
+                        // Content
+                        GlassCard {
+                            VStack(spacing: AppTheme.Spacing.md) {
+                                Text(hukamnama.gurmukhi)
+                                    .font(.system(size: 22))
+                                    .multilineTextAlignment(.center)
+                                    .lineSpacing(10)
+
+                                if let translit = hukamnama.transliteration {
+                                    Divider()
+                                    Text(translit)
+                                        .font(.system(size: 16, design: .serif))
+                                        .italic()
+                                        .foregroundStyle(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
+
+                                if let translation = hukamnama.translation {
+                                    Divider()
+                                    Text(translation)
+                                        .font(.system(size: 15))
+                                        .foregroundStyle(.secondary)
+                                        .multilineTextAlignment(.center)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
                     }
+                    .padding()
                 }
-
-                // Placeholder content
-                GlassCard {
-                    Text("Loading Hukamnama...")
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, AppTheme.Spacing.xxxl)
+            } else {
+                ContentUnavailableView {
+                    Label("Unable to Load", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text("Could not load today's Hukamnama")
+                } actions: {
+                    Button("Try Again") {
+                        Task { await viewModel.loadHukamnama() }
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
             }
-            .padding()
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Hukamnama")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.loadHukamnama()
+        }
     }
 }
 
