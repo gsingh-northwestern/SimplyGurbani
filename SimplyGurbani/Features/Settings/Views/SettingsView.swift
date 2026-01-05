@@ -115,9 +115,18 @@ struct SettingsView: View {
             }
 
             Button("Clear Cached Content") {
-                // This would clear SwiftData cache
+                GurbaniService.shared.clearCache()
             }
             .foregroundStyle(.red)
+
+            if let stats = GurbaniService.shared.cacheStats {
+                HStack {
+                    Text("Cached Items")
+                    Spacer()
+                    Text("\(stats.shabads) shabads, \(stats.banis) banis")
+                        .foregroundStyle(.secondary)
+                }
+            }
         } header: {
             Text("Data")
         }

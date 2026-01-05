@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         @Bindable var router = router
@@ -63,6 +65,10 @@ struct ContentView: View {
             .tag(TabRoute.settings)
         }
         .tint(AppTheme.Colors.primarySaffron)
+        .task {
+            // Configure caching for offline support
+            GurbaniService.shared.configureCaching(with: modelContext)
+        }
     }
 
     @ViewBuilder
