@@ -1,10 +1,12 @@
 import Foundation
+import SwiftData
 import Observation
 
 @Observable
 @MainActor
 final class ReaderViewModel {
     private let gurbaniService: GurbaniService
+    private var bookmarkService: BookmarkService?
 
     // Content
     private(set) var shabad: Shabad?
@@ -14,6 +16,11 @@ final class ReaderViewModel {
     private(set) var isLoading = false
     private(set) var error: APIError?
 
+    // Bookmark state
+    private(set) var bookmarkedVerseIDs: Set<Int> = []
+    var selectedVerseForBookmark: Verse?
+    var isShowingBookmarkSheet = false
+
     // Display settings
     var showGurmukhi = true
     var showTransliteration = true
@@ -22,6 +29,11 @@ final class ReaderViewModel {
 
     init(gurbaniService: GurbaniService = .shared) {
         self.gurbaniService = gurbaniService
+    }
+
+    func configureBookmarks(with modelContext: ModelContext) {
+        self.bookmarkService = BookmarkService(modelContext: modelContext)
+        refreshBookmarkStatus()
     }
 
     // MARK: - Load Shabad
@@ -114,5 +126,49 @@ final class ReaderViewModel {
         }
 
         return content
+    }
+
+    // MARK: - Bookmarks
+
+    func refreshBookmarkStatus() {
+        guard let service = bookmarkService else { return }
+        bookmarkedVerseIDs = Set(verses.filter { service.isBookmarked(verseID: $0.id) }.map { $0.id })
+    }
+
+    func isVerseBookmarked(_ verse: Verse) -> Bool {
+        bookmarkedVerseIDs.contains(verse.id)
+    }
+
+    func toggleBookmark(for verse: Verse) {
+        guard let service = bookmarkService else { return }
+
+        if isVerseBookmarked(verse) {
+            service.removeBookmark(verseID: verse.id)
+            bookmarkedVerseIDs.remove(verse.id)
+        } else {
+            service.bookmarkVerse(verse)
+            bookmarkedVerseIDs.insert(verse.id)
+        }
+    }
+
+    func bookmarkVerse(_ verse: Verse, folderName: String? = nil, notes: String? = nil) {
+        guard let service = bookmarkService else { return }
+        service.bookmarkVerse(verse, folderName: folderName, notes: notes)
+        bookmarkedVerseIDs.insert(verse.id)
+    }
+
+    var bookmarkFolders: [BookmarkFolder] {
+        bookmarkService?.getAllFolders() ?? []
+    }
+
+    /// Bookmark the first verse of the shabad (quick bookmark)
+    func bookmarkFirstVerse() {
+        guard let verse = verses.first else { return }
+        toggleBookmark(for: verse)
+    }
+
+    var isFirstVerseBookmarked: Bool {
+        guard let verse = verses.first else { return false }
+        return isVerseBookmarked(verse)
     }
 }

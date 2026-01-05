@@ -1,8 +1,10 @@
 import SwiftUI
+import SwiftData
 
 struct ReaderView: View {
     let shabadID: Int
     @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
 
     var body: some View {
@@ -31,11 +33,25 @@ struct ReaderView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                toolbarMenu
+                HStack(spacing: 16) {
+                    bookmarkButton
+                    toolbarMenu
+                }
             }
         }
         .task {
             await viewModel.loadShabad(id: shabadID)
+            viewModel.configureBookmarks(with: modelContext)
+            viewModel.refreshBookmarkStatus()
+        }
+    }
+
+    private var bookmarkButton: some View {
+        Button {
+            viewModel.bookmarkFirstVerse()
+        } label: {
+            Image(systemName: viewModel.isFirstVerseBookmarked ? "bookmark.fill" : "bookmark")
+                .foregroundStyle(viewModel.isFirstVerseBookmarked ? AppTheme.Colors.saffronFallback : .primary)
         }
     }
 
@@ -126,6 +142,7 @@ struct ReaderView: View {
 struct BaniReaderView: View {
     let baniID: Int
     @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
 
     var body: some View {
@@ -154,11 +171,25 @@ struct BaniReaderView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                toolbarMenu
+                HStack(spacing: 16) {
+                    bookmarkButton
+                    toolbarMenu
+                }
             }
         }
         .task {
             await viewModel.loadBani(id: baniID)
+            viewModel.configureBookmarks(with: modelContext)
+            viewModel.refreshBookmarkStatus()
+        }
+    }
+
+    private var bookmarkButton: some View {
+        Button {
+            viewModel.bookmarkFirstVerse()
+        } label: {
+            Image(systemName: viewModel.isFirstVerseBookmarked ? "bookmark.fill" : "bookmark")
+                .foregroundStyle(viewModel.isFirstVerseBookmarked ? AppTheme.Colors.saffronFallback : .primary)
         }
     }
 

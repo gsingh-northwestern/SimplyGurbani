@@ -8,7 +8,11 @@ struct SimplyGurbaniApp: App {
     init() {
         do {
             let schema = Schema([
-                // SwiftData models will be added here
+                BookmarkedVerse.self,
+                BookmarkFolder.self,
+                CachedShabad.self,
+                CachedBani.self,
+                CachedHukamnama.self
             ])
             let configuration = ModelConfiguration(
                 schema: schema,
