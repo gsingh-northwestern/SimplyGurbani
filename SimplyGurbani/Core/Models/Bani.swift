@@ -1,7 +1,7 @@
 import Foundation
 
 /// A named collection of verses (e.g., Japji Sahib, Rehras)
-struct Bani: Identifiable, Codable, Hashable, Sendable {
+struct Bani: Identifiable, Decodable, Hashable, Sendable {
     let id: Int
     let gurmukhi: String
     let gurmukhiUnicode: String
@@ -11,9 +11,14 @@ struct Bani: Identifiable, Codable, Hashable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id = "ID"
         case gurmukhi
-        case gurmukhiUnicode = "unicode"
+        case gurmukhiUnicode = "gurmukhiUni"
         case transliteration
+        case transliterations
         case english
+    }
+
+    private enum TranslitKeys: String, CodingKey {
+        case english = "en"
     }
 
     init(from decoder: Decoder) throws {
@@ -22,18 +27,16 @@ struct Bani: Identifiable, Codable, Hashable, Sendable {
         gurmukhi = try container.decode(String.self, forKey: .gurmukhi)
         gurmukhiUnicode = try container.decode(String.self, forKey: .gurmukhiUnicode)
 
-        // Handle nested transliteration
-        if let translitContainer = try? container.nestedContainer(keyedBy: TranslitKeys.self, forKey: .transliteration) {
+        // Handle nested transliterations object (API returns "transliterations" with "en" inside)
+        if let translitContainer = try? container.nestedContainer(keyedBy: TranslitKeys.self, forKey: .transliterations) {
             transliteration = try translitContainer.decodeIfPresent(String.self, forKey: .english)
+        } else if let directTranslit = try? container.decode(String.self, forKey: .transliteration) {
+            transliteration = directTranslit
         } else {
             transliteration = nil
         }
 
         english = nil // Not provided in list endpoint
-    }
-
-    private enum TranslitKeys: String, CodingKey {
-        case english = "en"
     }
 
     init(id: Int, gurmukhi: String, gurmukhiUnicode: String, transliteration: String?, english: String?) {

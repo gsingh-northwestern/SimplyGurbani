@@ -16,14 +16,14 @@ struct BrowseView: View {
                     GlassCard(padding: 0) {
                         VStack(spacing: 0) {
                             BrowseRowLink(
-                                title: "Nitnem Banis",
+                                title: "All Banis",
                                 icon: "book.closed",
-                                destination: Route.baniList
+                                destination: Route.categorizedBaniList
                             )
                             Divider().padding(.leading, 52)
                             BrowseRowLink(
                                 title: "Sri Guru Granth Sahib Ji",
-                                icon: "book",
+                                icon: "books.vertical",
                                 destination: Route.angPicker(sourceID: "G")
                             )
                             Divider().padding(.leading, 52)
@@ -491,12 +491,25 @@ enum GurbaniRaag: String, CaseIterable, Identifiable {
 // MARK: - Writer List View
 
 struct WriterListView: View {
+    @Environment(AppRouter.self) private var router
+
     var body: some View {
         List {
             Section {
                 ForEach(GurbaniWriter.gurus) { writer in
-                    WriterRowView(writer: writer)
-                        .listRowBackground(AppTheme.Colors.cardBackground)
+                    Button {
+                        router.browsePath.append(
+                            Route.writerShabads(
+                                writerID: writer.id,
+                                writerName: writer.englishName,
+                                writerGurmukhi: writer.gurmukhiName
+                            )
+                        )
+                    } label: {
+                        WriterRowView(writer: writer)
+                    }
+                    .buttonStyle(.plain)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
                 }
             } header: {
                 Text("Sikh Gurus")
@@ -504,8 +517,19 @@ struct WriterListView: View {
 
             Section {
                 ForEach(GurbaniWriter.bhagats) { writer in
-                    WriterRowView(writer: writer)
-                        .listRowBackground(AppTheme.Colors.cardBackground)
+                    Button {
+                        router.browsePath.append(
+                            Route.writerShabads(
+                                writerID: writer.id,
+                                writerName: writer.englishName,
+                                writerGurmukhi: writer.gurmukhiName
+                            )
+                        )
+                    } label: {
+                        WriterRowView(writer: writer)
+                    }
+                    .buttonStyle(.plain)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
                 }
             } header: {
                 Text("Bhagats")
@@ -513,8 +537,19 @@ struct WriterListView: View {
 
             Section {
                 ForEach(GurbaniWriter.others) { writer in
-                    WriterRowView(writer: writer)
-                        .listRowBackground(AppTheme.Colors.cardBackground)
+                    Button {
+                        router.browsePath.append(
+                            Route.writerShabads(
+                                writerID: writer.id,
+                                writerName: writer.englishName,
+                                writerGurmukhi: writer.gurmukhiName
+                            )
+                        )
+                    } label: {
+                        WriterRowView(writer: writer)
+                    }
+                    .buttonStyle(.plain)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
                 }
             } header: {
                 Text("Others")
@@ -553,6 +588,9 @@ struct WriterRowView: View {
                     .font(AppTheme.Typography.caption)
                     .foregroundStyle(.tertiary)
             }
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 4)
     }

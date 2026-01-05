@@ -11,8 +11,10 @@ enum Route: Hashable {
     // Browse routes
     case scriptureList
     case baniList
+    case categorizedBaniList
     case raagList
     case writerList
+    case writerShabads(writerID: Int, writerName: String, writerGurmukhi: String)
     case angPicker(sourceID: String)
     case raagDetail(raagID: Int)
 

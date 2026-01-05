@@ -214,6 +214,7 @@ struct BaniReaderView: View {
                                 .font(AppTheme.Typography.caption)
                                 .foregroundStyle(.tertiary)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                 }
 

@@ -76,7 +76,7 @@ actor APIClient {
 
     // MARK: - Banis
 
-    func fetchBaniList() async throws -> [String: Bani] {
+    func fetchBaniList() async throws -> [Bani] {
         try await request("banis")
     }
 
@@ -101,6 +101,14 @@ actor APIClient {
             URLQueryItem(name: "searchtype", value: String(searchType.rawValue))
         ]
         return try await request("search/\(query.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? query)", queryItems: queryItems)
+    }
+
+    func searchByWriter(writerID: Int, sourceID: String = "G") async throws -> SearchResponse {
+        let queryItems = [
+            URLQueryItem(name: "writer", value: String(writerID)),
+            URLQueryItem(name: "source", value: sourceID)
+        ]
+        return try await request("search/*", queryItems: queryItems)
     }
 
     // MARK: - Angs (Pages)

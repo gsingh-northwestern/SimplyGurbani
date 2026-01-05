@@ -96,10 +96,9 @@ final class GurbaniService {
         isLoadingBanis = true
         defer { isLoadingBanis = false }
 
-        let response = try await apiClient.fetchBaniList()
-        let banis = response.values.sorted { $0.id < $1.id }
-        baniList = banis
-        return banis
+        let banis = try await apiClient.fetchBaniList()
+        baniList = banis.sorted { $0.id < $1.id }
+        return baniList
     }
 
     func fetchBani(id: Int) async throws -> BaniContent {
@@ -215,6 +214,11 @@ final class GurbaniService {
     func search(query: String, searchType: SearchType = .firstLetter) async throws -> [SearchResult] {
         // Search doesn't use caching - always fresh
         let response = try await apiClient.search(query: query, searchType: searchType)
+        return response.verses.map { $0.toSearchResult() }
+    }
+
+    func searchByWriter(writerID: Int, sourceID: String = "G") async throws -> [SearchResult] {
+        let response = try await apiClient.searchByWriter(writerID: writerID, sourceID: sourceID)
         return response.verses.map { $0.toSearchResult() }
     }
 

@@ -155,6 +155,12 @@ struct ContentView: View {
             HukamnamaDetailView()
         case .angPicker(let sourceID):
             AngPickerView(sourceID: sourceID)
+        case .angReader(let ang, let sourceID):
+            AngReaderView(angNumber: ang, sourceID: sourceID)
+        case .writerShabads(let writerID, let writerName, let writerGurmukhi):
+            WriterShabadsView(writerID: writerID, writerName: writerName, writerGurmukhi: writerGurmukhi)
+        case .categorizedBaniList:
+            CategorizedBaniListView()
         case .searchResults(let query):
             SearchResultsView(query: query)
         default:

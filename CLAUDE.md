@@ -136,7 +136,25 @@ NavigationStack(path: $router.browsePath) {
 - [x] Unit tests (34 tests passing)
 - [x] New color palette implemented (beige, dark blue, light blue, burgundy)
 - [x] Consistent card styling with GlassCard throughout app
+- [x] Browse feature fully functional (SGGS, Raags, Writers, Banis)
 - [ ] Additional UI/UX polish
+
+## Recent Changes (v0.6.0)
+- **Browse Feature Complete**: All 4 browse sections now fully functional
+  - **Sri Guru Granth Sahib Ji**: Browse by ang (page 1-1430) with prev/next pagination
+  - **Browse by Raag**: Navigate to specific angs for each raag
+  - **Browse by Writer**: View list of shabads by each writer
+  - **All Banis**: Categorized list (Nitnem, Major Works, Ceremonial, Other)
+- **New Files**:
+  - `AngReaderView.swift` - Display SGGS content by ang with pagination
+  - `WriterShabadsView.swift` - Show shabads by selected writer
+  - `CategorizedBaniListView.swift` - All banis organized by category
+  - `BaniCategory.swift` - Enum for bani categorization
+- **New Routes**: `angReader`, `writerShabads`, `categorizedBaniList`
+- **API Fixes**:
+  - Fixed Bani model decoding (`gurmukhiUni` vs `unicode`, nested `transliterations`)
+  - Added `searchByWriter()` endpoint
+- **UI Improvements**: Header cards now full-width in reader views
 
 ## Recent Changes (v0.5.0)
 - Implemented new color palette:
@@ -179,3 +197,5 @@ NavigationStack(path: $router.browsePath) {
 - Add dark mode support
 - Test on various device sizes
 - Add localization support
+- Consider adding audio playback for shabads/banis
+- Add sharing functionality improvements

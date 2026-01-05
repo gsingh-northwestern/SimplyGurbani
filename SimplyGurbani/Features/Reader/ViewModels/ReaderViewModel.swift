@@ -12,6 +12,10 @@ final class ReaderViewModel {
     private(set) var shabad: Shabad?
     private(set) var baniContent: BaniContent?
 
+    // Ang navigation state
+    private(set) var currentAngNumber: Int?
+    private(set) var currentSourceID: String?
+
     // State
     private(set) var isLoading = false
     private(set) var error: APIError?
@@ -72,6 +76,50 @@ final class ReaderViewModel {
         }
 
         isLoading = false
+    }
+
+    // MARK: - Load Ang
+
+    func loadAng(number: Int, sourceID: String = "G") async {
+        guard !isLoading else { return }
+
+        isLoading = true
+        error = nil
+        currentAngNumber = number
+        currentSourceID = sourceID
+
+        do {
+            shabad = try await gurbaniService.fetchAng(number: number, sourceID: sourceID)
+        } catch let apiError as APIError {
+            error = apiError
+        } catch {
+            self.error = .networkError(error)
+        }
+
+        isLoading = false
+    }
+
+    // MARK: - Ang Navigation
+
+    var canGoToPreviousAng: Bool {
+        guard let ang = currentAngNumber else { return false }
+        return ang > 1
+    }
+
+    var canGoToNextAng: Bool {
+        guard let ang = currentAngNumber else { return false }
+        let maxAng = currentSourceID == "G" ? 1430 : 1428
+        return ang < maxAng
+    }
+
+    func goToPreviousAng() async {
+        guard canGoToPreviousAng, let ang = currentAngNumber, let source = currentSourceID else { return }
+        await loadAng(number: ang - 1, sourceID: source)
+    }
+
+    func goToNextAng() async {
+        guard canGoToNextAng, let ang = currentAngNumber, let source = currentSourceID else { return }
+        await loadAng(number: ang + 1, sourceID: source)
     }
 
     // MARK: - Computed Properties
