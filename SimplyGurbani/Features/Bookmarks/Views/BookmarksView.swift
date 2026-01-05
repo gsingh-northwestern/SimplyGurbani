@@ -14,6 +14,7 @@ struct BookmarksView: View {
                 bookmarksList
             }
         }
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle(viewModel.displayTitle)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -82,6 +83,7 @@ struct BookmarksView: View {
                             }
                         }
                         .buttonStyle(.plain)
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
                                 viewModel.deleteFolder(folder)
@@ -103,6 +105,7 @@ struct BookmarksView: View {
                             BookmarkRow(bookmark: bookmark)
                         }
                         .buttonStyle(.plain)
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
                                 viewModel.deleteBookmark(bookmark)
@@ -139,9 +142,12 @@ struct BookmarksView: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding()
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.Colors.backgroundBeige)
     }
 
     private var newFolderSheet: some View {
@@ -149,8 +155,11 @@ struct BookmarksView: View {
             Form {
                 Section {
                     TextField("Folder Name", text: $viewModel.newFolderName)
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.Colors.backgroundBeige)
             .navigationTitle("New Folder")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

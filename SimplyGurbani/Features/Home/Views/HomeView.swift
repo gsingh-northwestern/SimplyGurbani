@@ -50,7 +50,7 @@ struct HomeView: View {
             }
             .padding(.vertical)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("Simply Gurbani")
         .task {
             await viewModel.loadHukamnama()
@@ -155,19 +155,25 @@ struct QuickAccessGrid: View {
                 Button {
                     router.navigateToBani(bani.rawValue)
                 } label: {
-                    GlassCard(padding: AppTheme.Spacing.md) {
-                        VStack(spacing: AppTheme.Spacing.sm) {
-                            Image(systemName: bani.icon)
-                                .font(.title2)
-                                .foregroundStyle(AppTheme.Colors.saffronFallback)
-
-                            Text(bani.displayName)
-                                .font(AppTheme.Typography.caption)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                        }
+                    Text(bani.displayName)
+                        .font(AppTheme.Typography.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
-                    }
+                        .frame(minHeight: 40)
+                        .padding(AppTheme.Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                                .fill(AppTheme.Colors.accentDarkBlue)
+                        )
+                        .shadow(
+                            color: AppTheme.Colors.accentDarkBlue.opacity(0.2),
+                            radius: 6,
+                            x: 0,
+                            y: 3
+                        )
                 }
                 .buttonStyle(.plain)
             }

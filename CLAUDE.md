@@ -80,10 +80,20 @@ NavigationStack(path: $router.browsePath) {
 - Responses cached using SwiftData for offline access
 
 ## Design System
-- **Primary**: Saffron (#FF6B00)
-- **Secondary**: Gold (#D4AF37)
-- **Accent**: Cardinal Red (#C41E3A)
-- Use `.glassBackground()` modifier for iOS 18 liquid glass effect
+
+### Color Palette
+| Color | Hex | RGB | Usage |
+|-------|-----|-----|-------|
+| Light Beige | #FDF0D5 | (0.992, 0.941, 0.835) | App background |
+| Dark Blue | #003049 | (0.0, 0.188, 0.286) | Primary text, headers, Quick Access tiles |
+| Light Blue | #669BBC | (0.4, 0.608, 0.737) | Secondary accents, icons |
+| Burgundy Red | #AB364D | (0.671, 0.212, 0.302) | Primary accent, buttons, highlights |
+| Warm Ivory | #FFFEF7 | (1.0, 0.995, 0.97) | Card backgrounds |
+
+### Components
+- `GlassCard` - Card component with warm ivory background, subtle border, and shadow
+- `GlassButtonStyle` - Button styles (`.glass` and `.glassProminent`)
+- Use `GlassCard` for consistent card styling across all screens
 - Gurmukhi fonts: GurbaniAkhar, AnmolLipi (register in Info.plist)
 
 ## Key Files
@@ -124,7 +134,23 @@ NavigationStack(path: $router.browsePath) {
 - [x] Enhanced Settings with typography controls
 - [x] Offline caching with cache-first strategy
 - [x] Unit tests (34 tests passing)
-- [ ] UI/UX testing and polish
+- [x] New color palette implemented (beige, dark blue, light blue, burgundy)
+- [x] Consistent card styling with GlassCard throughout app
+- [ ] Additional UI/UX polish
+
+## Recent Changes (v0.5.0)
+- Implemented new color palette:
+  - Light Beige (#FDF0D5) - app background
+  - Dark Blue (#003049) - text, headers, Quick Access tiles
+  - Light Blue (#669BBC) - secondary accents
+  - Burgundy Red (#AB364D) - primary accent, buttons
+  - Warm Ivory (#FFFEF7) - card backgrounds
+- Updated GlassCard component with warm ivory background, subtle border, shadow
+- Converted BrowseView from List to ScrollView + GlassCard for visual consistency
+- Quick Access tiles now use dark blue background with white text
+- Simplified Quick Access grid to text-only (no icons)
+- Updated tab bar and navigation bar appearances to match new palette
+- Applied consistent card styling across all screens
 
 ## Recent Changes (v0.4.0)
 - Added CacheService for SwiftData-based offline caching
@@ -149,7 +175,7 @@ NavigationStack(path: $router.browsePath) {
 - All data models created matching BaniDB API structure
 
 ## Next Steps
-- Test all app functionality on device/simulator
-- Verify UI displays correctly across different screen sizes
-- Test menu interactions and navigation flows
-- Polish UI/UX based on testing results
+- Convert remaining List views (Settings, Search, Bookmarks) to GlassCard style if desired
+- Add dark mode support
+- Test on various device sizes
+- Add localization support

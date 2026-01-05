@@ -28,15 +28,15 @@ struct ReaderView: View {
                 readerContent
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle(viewModel.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 16) {
-                    bookmarkButton
-                    toolbarMenu
-                }
+                toolbarMenu
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                bookmarkButton
             }
         }
         .task {
@@ -166,15 +166,15 @@ struct BaniReaderView: View {
                 baniContent
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle(viewModel.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: 16) {
-                    bookmarkButton
-                    toolbarMenu
-                }
+                toolbarMenu
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                bookmarkButton
             }
         }
         .task {
@@ -362,7 +362,7 @@ struct HukamnamaDetailView: View {
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("Hukamnama")
         .navigationBarTitleDisplayMode(.inline)
         .task {

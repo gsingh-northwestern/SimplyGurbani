@@ -16,6 +16,9 @@ struct GlassCard<Content: View>: View {
         self.cornerRadius = cornerRadius
     }
 
+    // Dark blue for shadow - ties into palette
+    private let shadowColor = Color(red: 0.0, green: 0.188, blue: 0.286)
+
     var body: some View {
         content
             .padding(padding)
@@ -23,7 +26,7 @@ struct GlassCard<Content: View>: View {
                 GlassBackground(cornerRadius: cornerRadius)
             }
             .shadow(
-                color: Color.black.opacity(0.1),
+                color: shadowColor.opacity(0.08),
                 radius: 8,
                 x: 0,
                 y: 4
@@ -31,49 +34,27 @@ struct GlassCard<Content: View>: View {
     }
 }
 
-/// Glass background with blur and gradient overlay
+/// Card background - warm white that complements beige palette
 struct GlassBackground: View {
     let cornerRadius: CGFloat
     var opacity: Double = 0.15
     var borderWidth: CGFloat = 0.5
 
     var body: some View {
-        ZStack {
-            // Blur layer
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(.ultraThinMaterial)
-
-            // Gradient overlay for glass effect
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(opacity * 1.5),
-                            Color.white.opacity(opacity * 0.5)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(AppTheme.Colors.cardBackground)
+            .overlay {
+                // Subtle inner border for definition
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(
+                        AppTheme.Colors.accentDarkBlue.opacity(0.08),
+                        lineWidth: borderWidth
                     )
-                )
-
-            // Inner highlight border
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.4),
-                            Color.white.opacity(0.1)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: borderWidth
-                )
-        }
+            }
     }
 }
 
-/// Glass button style
+/// Button style matching card aesthetic
 struct GlassButtonStyle: ButtonStyle {
     let isProminent: Bool
 
@@ -88,20 +69,20 @@ struct GlassButtonStyle: ButtonStyle {
             .background {
                 if isProminent {
                     Capsule()
-                        .fill(AppTheme.Gradients.saffronGradient)
+                        .fill(AppTheme.Colors.primaryBurgundy)
                 } else {
                     Capsule()
-                        .fill(.ultraThinMaterial)
+                        .fill(AppTheme.Colors.cardBackground)
                         .overlay {
                             Capsule()
                                 .strokeBorder(
-                                    AppTheme.Colors.glassBorder,
+                                    AppTheme.Colors.accentDarkBlue.opacity(0.1),
                                     lineWidth: 0.5
                                 )
                         }
                 }
             }
-            .foregroundStyle(isProminent ? .white : .primary)
+            .foregroundStyle(isProminent ? .white : AppTheme.Colors.accentDarkBlue)
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
             .opacity(configuration.isPressed ? 0.9 : 1.0)
             .animation(AppTheme.Animation.quick, value: configuration.isPressed)

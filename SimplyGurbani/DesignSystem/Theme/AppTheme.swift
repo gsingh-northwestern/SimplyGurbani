@@ -5,63 +5,98 @@ enum AppTheme {
 
     // MARK: - Colors
 
+    // New Color Palette:
+    // #FDF0D5 - Light Beige (Background)
+    // #003049 - Dark Blue (Text, Headers)
+    // #669BBC - Light Blue (Secondary accents, Icons)
+    // #AB364D - Burgundy Red (Primary accent, Buttons)
+
     enum Colors {
-        // Primary palette - Saffron/Kesari
-        static let primarySaffron = Color("PrimarySaffron")
-        static let primarySaffronLight = Color("PrimarySaffronLight")
-        static let primarySaffronDark = Color("PrimarySaffronDark")
+        // Primary palette - Burgundy Red (#AB364D)
+        static let primaryBurgundy = Color(red: 0.671, green: 0.212, blue: 0.302)
+        static let primaryBurgundyLight = Color(red: 0.75, green: 0.35, blue: 0.42)
+        static let primaryBurgundyDark = Color(red: 0.55, green: 0.15, blue: 0.25)
 
-        // Secondary palette - Gold
-        static let secondaryGold = Color("SecondaryGold")
-        static let secondaryGoldLight = Color("SecondaryGoldLight")
-        static let secondaryGoldDark = Color("SecondaryGoldDark")
+        // Legacy aliases for compatibility
+        static let primarySaffron = primaryBurgundy
+        static let primarySaffronLight = primaryBurgundyLight
+        static let primarySaffronDark = primaryBurgundyDark
 
-        // Accent palette - Royal Red
-        static let accentRed = Color("AccentRed")
-        static let accentRedLight = Color("AccentRedLight")
-        static let accentRedDark = Color("AccentRedDark")
+        // Secondary palette - Light Blue (#669BBC)
+        static let secondaryBlue = Color(red: 0.4, green: 0.608, blue: 0.737)
+        static let secondaryBlueLight = Color(red: 0.5, green: 0.7, blue: 0.82)
+        static let secondaryBlueDark = Color(red: 0.3, green: 0.5, blue: 0.65)
 
-        // Backgrounds
-        static let backgroundPrimary = Color("BackgroundPrimary")
-        static let backgroundSecondary = Color("BackgroundSecondary")
-        static let backgroundCream = Color("BackgroundCream")
+        // Legacy aliases for compatibility
+        static let secondaryGold = secondaryBlue
+        static let secondaryGoldLight = secondaryBlueLight
+        static let secondaryGoldDark = secondaryBlueDark
+
+        // Accent palette - Dark Blue (#003049)
+        static let accentDarkBlue = Color(red: 0.0, green: 0.188, blue: 0.286)
+        static let accentDarkBlueLight = Color(red: 0.1, green: 0.28, blue: 0.38)
+        static let accentDarkBlueDark = Color(red: 0.0, green: 0.12, blue: 0.2)
+
+        // Legacy aliases for compatibility
+        static let accentRed = primaryBurgundy
+        static let accentRedLight = primaryBurgundyLight
+        static let accentRedDark = primaryBurgundyDark
+
+        // Backgrounds - Light Beige (#FDF0D5)
+        static let backgroundBeige = Color(red: 0.992, green: 0.941, blue: 0.835)
+        static let backgroundPrimary = backgroundBeige
+        static let backgroundSecondary = Color(red: 0.98, green: 0.92, blue: 0.8)
+        static let backgroundCream = backgroundBeige
+
+        // Card/Surface background - Warm Ivory (#FFFEF7)
+        static let cardBackground = Color(red: 1.0, green: 0.995, blue: 0.97)
 
         // Text colors
-        static let textPrimary = Color("TextPrimary")
-        static let textSecondary = Color("TextSecondary")
-        static let textTertiary = Color("TextTertiary")
+        static let textPrimary = accentDarkBlue
+        static let textSecondary = Color(red: 0.1, green: 0.3, blue: 0.4)
+        static let textTertiary = Color(red: 0.3, green: 0.45, blue: 0.55)
         static let textOnPrimary = Color.white
 
-        // Glass colors
-        static let glassBackground = Color.white.opacity(0.15)
-        static let glassBorder = Color.white.opacity(0.3)
-        static let glassShadow = Color.black.opacity(0.1)
+        // Glass colors (adjusted for beige background)
+        static let glassBackground = Color.white.opacity(0.6)
+        static let glassBorder = Color.white.opacity(0.8)
+        static let glassShadow = accentDarkBlue.opacity(0.1)
 
-        // Fallback colors (used when assets not loaded)
-        static let saffronFallback = Color(red: 1.0, green: 0.42, blue: 0.0)
-        static let goldFallback = Color(red: 0.83, green: 0.69, blue: 0.22)
-        static let redFallback = Color(red: 0.77, green: 0.12, blue: 0.23)
+        // Fallback colors (primary colors used throughout app)
+        static let saffronFallback = primaryBurgundy  // Burgundy #AB364D
+        static let goldFallback = secondaryBlue       // Light Blue #669BBC
+        static let redFallback = primaryBurgundy      // Burgundy #AB364D
+        static let darkBlueFallback = accentDarkBlue  // Dark Blue #003049
     }
 
     // MARK: - Gradients
 
     enum Gradients {
-        static let saffronGradient = LinearGradient(
-            colors: [Colors.saffronFallback, Colors.goldFallback],
+        // Primary gradient - Burgundy to Light Blue
+        static let primaryGradient = LinearGradient(
+            colors: [Colors.primaryBurgundy, Colors.secondaryBlue],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
 
-        static let goldenGradient = LinearGradient(
-            colors: [Colors.goldFallback.opacity(0.8), Colors.goldFallback],
+        // Legacy alias
+        static let saffronGradient = primaryGradient
+
+        // Secondary gradient - Light Blue shades
+        static let secondaryGradient = LinearGradient(
+            colors: [Colors.secondaryBlue.opacity(0.8), Colors.secondaryBlue],
             startPoint: .top,
             endPoint: .bottom
         )
 
+        // Legacy alias
+        static let goldenGradient = secondaryGradient
+
+        // Glass gradient for cards
         static let glassGradient = LinearGradient(
             colors: [
-                Color.white.opacity(0.25),
-                Color.white.opacity(0.1)
+                Color.white.opacity(0.7),
+                Color.white.opacity(0.4)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing

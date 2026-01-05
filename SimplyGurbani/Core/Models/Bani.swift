@@ -65,51 +65,101 @@ struct BaniContent: Identifiable, Sendable {
 /// API response for bani content
 struct BaniResponse: Codable, Sendable {
     let baniInfo: BaniInfo
-    let verses: [APIVerse]
+    let verses: [BaniVerseWrapper]
 
     struct BaniInfo: Codable, Sendable {
-        let baniId: Int
+        let baniID: Int
         let gurmukhi: String
         let unicode: String
-        let transliteration: TranslitInfo?
+        let english: String?
+        let en: String?
 
-        struct TranslitInfo: Codable, Sendable {
+        var transliteration: String? {
+            english ?? en
+        }
+    }
+
+    /// Wrapper for verse in bani response (has extra nesting)
+    struct BaniVerseWrapper: Codable, Sendable {
+        let verse: BaniAPIVerse
+    }
+
+    /// Verse structure specific to bani endpoint
+    struct BaniAPIVerse: Codable, Sendable {
+        let verseId: Int
+        let verse: VerseContent
+        let larivaar: VerseContent?
+        let translation: Translation?
+        let transliteration: Transliteration?
+
+        struct VerseContent: Codable, Sendable {
+            let gurmukhi: String
+            let unicode: String
+        }
+
+        struct Translation: Codable, Sendable {
+            let en: TranslationSources?
+
+            struct TranslationSources: Codable, Sendable {
+                let bdb: String?
+            }
+        }
+
+        struct Transliteration: Codable, Sendable {
+            let english: String?
             let en: String?
+
+            var englishText: String? {
+                english ?? en
+            }
+        }
+
+        func toVerse() -> Verse {
+            Verse(
+                id: verseId,
+                shabadID: 0,
+                gurmukhi: verse.gurmukhi,
+                gurmukhiUnicode: verse.unicode,
+                larivaar: larivaar?.gurmukhi,
+                larivaarUnicode: larivaar?.unicode,
+                transliteration: transliteration?.englishText,
+                translation: translation?.en?.bdb,
+                sourceID: "G",
+                ang: 0
+            )
         }
     }
 
     func toBaniContent() -> BaniContent {
         BaniContent(
-            id: baniInfo.baniId,
+            id: baniInfo.baniID,
             name: baniInfo.gurmukhi,
             nameUnicode: baniInfo.unicode,
-            transliteration: baniInfo.transliteration?.en,
-            verses: verses.map { $0.toVerse() }
+            transliteration: baniInfo.transliteration,
+            verses: verses.map { $0.verse.toVerse() }
         )
     }
 }
 
 /// Well-known bani IDs from BaniDB
 enum WellKnownBani: Int, CaseIterable {
-    case japjiSahib = 1
-    case rehrasSahib = 2
-    case kirtanSohila = 3
-    case anandSahibBhog = 4
-    case sukhmaniSahib = 20
-    case anandSahib = 21
-    case asaDiVar = 22
-    case chaupaiSahib = 5
-    case tavPrasad = 6
-    case ardas = 7
+    case japjiSahib = 2       // ਜਪੁਜੀ ਸਾਹਿਬ
+    case rehrasSahib = 21     // ਰਹਰਾਸਿ ਸਾਹਿਬ
+    case kirtanSohila = 23    // ਸੋਹਿਲਾ ਸਾਹਿਬ
+    case anandSahib = 10      // ਅਨੰਦੁ ਸਾਹਿਬ
+    case sukhmaniSahib = 31   // ਸੁਖਮਨੀ ਸਾਹਿਬ
+    case asaDiVar = 90        // ਆਸਾ ਦੀ ਵਾਰ
+    case chaupaiSahib = 9     // ਬੇਨਤੀ ਚੌਪਈ ਸਾਹਿਬ
+    case tavPrasad = 6        // ਤ੍ਵ ਪ੍ਰਸਾਦਿ ਸਵੱਯੇ
+    case ardas = 24           // ਅਰਦਾਸ
 
     var displayName: String {
         switch self {
         case .japjiSahib: return "Japji Sahib"
         case .rehrasSahib: return "Rehras Sahib"
         case .kirtanSohila: return "Kirtan Sohila"
-        case .anandSahibBhog: return "Anand Sahib (Bhog)"
-        case .sukhmaniSahib: return "Sukhmani Sahib"
         case .anandSahib: return "Anand Sahib"
+        case .sukhmaniSahib: return "Sukhmani Sahib"
         case .asaDiVar: return "Asa di Var"
         case .chaupaiSahib: return "Chaupai Sahib"
         case .tavPrasad: return "Tav Prasad Svaiye"
@@ -122,7 +172,7 @@ enum WellKnownBani: Int, CaseIterable {
         case .japjiSahib: return "sunrise"
         case .rehrasSahib: return "sunset"
         case .kirtanSohila: return "moon.stars"
-        case .anandSahibBhog, .anandSahib: return "sparkles"
+        case .anandSahib: return "sparkles"
         case .sukhmaniSahib: return "heart.circle"
         case .asaDiVar: return "music.note"
         case .chaupaiSahib: return "shield"

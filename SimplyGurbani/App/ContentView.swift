@@ -7,8 +7,82 @@ struct ContentView: View {
 
     var body: some View {
         @Bindable var router = router
+        legacyTabView(router: router)
+    }
 
+    @available(iOS 18.0, *)
+    @ViewBuilder
+    private func modernTabView(router: AppRouter) -> some View {
+        @Bindable var router = router
         TabView(selection: $router.selectedTab) {
+            Tab(value: TabRoute.home) {
+                NavigationStack(path: $router.homePath) {
+                    HomeView()
+                        .navigationDestination(for: Route.self) { route in
+                            destinationView(for: route)
+                        }
+                }
+            } label: {
+                Label(TabRoute.home.title, systemImage: TabRoute.home.systemImage)
+            }
+
+            Tab(value: TabRoute.browse) {
+                NavigationStack(path: $router.browsePath) {
+                    BrowseView()
+                        .navigationDestination(for: Route.self) { route in
+                            destinationView(for: route)
+                        }
+                }
+            } label: {
+                Label(TabRoute.browse.title, systemImage: TabRoute.browse.systemImage)
+            }
+
+            Tab(value: TabRoute.search) {
+                NavigationStack(path: $router.searchPath) {
+                    SearchView()
+                        .navigationDestination(for: Route.self) { route in
+                            destinationView(for: route)
+                        }
+                }
+            } label: {
+                Label(TabRoute.search.title, systemImage: TabRoute.search.systemImage)
+            }
+
+            Tab(value: TabRoute.bookmarks) {
+                NavigationStack(path: $router.bookmarksPath) {
+                    BookmarksView()
+                        .navigationDestination(for: Route.self) { route in
+                            destinationView(for: route)
+                        }
+                }
+            } label: {
+                Label(TabRoute.bookmarks.title, systemImage: TabRoute.bookmarks.systemImage)
+            }
+
+            Tab(value: TabRoute.settings) {
+                NavigationStack(path: $router.settingsPath) {
+                    SettingsView()
+                        .navigationDestination(for: Route.self) { route in
+                            destinationView(for: route)
+                        }
+                }
+            } label: {
+                Label(TabRoute.settings.title, systemImage: TabRoute.settings.systemImage)
+            }
+        }
+        .tabViewStyle(.tabBarOnly)
+        .tint(AppTheme.Colors.primaryBurgundy)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.light, for: .tabBar)
+        .task {
+            GurbaniService.shared.configureCaching(with: modelContext)
+        }
+    }
+
+    @ViewBuilder
+    private func legacyTabView(router: AppRouter) -> some View {
+        @Bindable var router = router
+        TabView {
             NavigationStack(path: $router.homePath) {
                 HomeView()
                     .navigationDestination(for: Route.self) { route in
@@ -64,9 +138,8 @@ struct ContentView: View {
             }
             .tag(TabRoute.settings)
         }
-        .tint(AppTheme.Colors.primarySaffron)
+        .tint(AppTheme.Colors.primaryBurgundy)
         .task {
-            // Configure caching for offline support
             GurbaniService.shared.configureCaching(with: modelContext)
         }
     }

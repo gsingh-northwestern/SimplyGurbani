@@ -89,7 +89,8 @@ final class ReaderViewModel {
         if let shabad {
             return "Ang \(shabad.ang)"
         } else if let bani = baniContent {
-            return bani.name
+            // Prefer English transliteration for nav title, fallback to Unicode
+            return bani.transliteration ?? bani.nameUnicode
         }
         return "Loading..."
     }

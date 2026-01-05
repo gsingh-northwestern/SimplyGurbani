@@ -29,15 +29,21 @@ struct SettingsView: View {
             aboutSection
             versionSection
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("Settings")
     }
 
     private var displaySection: some View {
         Section {
             Toggle("Gurmukhi", isOn: $showGurmukhi)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             Toggle("Transliteration", isOn: $showTransliteration)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             Toggle("English Translation", isOn: $showEnglish)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             Toggle("Larivaar", isOn: $useLarivaar)
+                .listRowBackground(AppTheme.Colors.cardBackground)
         } header: {
             Text("Display Options")
         } footer: {
@@ -62,6 +68,7 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 4)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -72,6 +79,7 @@ struct SettingsView: View {
                 }
                 Slider(value: $translitFontSize, in: 12...24, step: 1)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -82,6 +90,7 @@ struct SettingsView: View {
                 }
                 Slider(value: $translationFontSize, in: 12...22, step: 1)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             Button("Reset to Defaults") {
                 gurmukhiFontSize = 24.0
@@ -89,6 +98,7 @@ struct SettingsView: View {
                 translationFontSize = 15.0
             }
             .foregroundStyle(AppTheme.Colors.saffronFallback)
+            .listRowBackground(AppTheme.Colors.cardBackground)
         } header: {
             Text("Typography")
         }
@@ -101,6 +111,7 @@ struct SettingsView: View {
                 Text("Full Word").tag("fullWord")
                 Text("Gurmukhi").tag("gurmukhi")
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
         } header: {
             Text("Search")
         } footer: {
@@ -113,11 +124,13 @@ struct SettingsView: View {
             Button("Clear Search History") {
                 UserDefaults.standard.removeObject(forKey: "searchHistory")
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             Button("Clear Cached Content") {
                 GurbaniService.shared.clearCache()
             }
             .foregroundStyle(.red)
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             if let stats = GurbaniService.shared.cacheStats {
                 HStack {
@@ -126,6 +139,7 @@ struct SettingsView: View {
                     Text("\(stats.shabads) shabads, \(stats.banis) banis")
                         .foregroundStyle(.secondary)
                 }
+                .listRowBackground(AppTheme.Colors.cardBackground)
             }
         } header: {
             Text("Data")
@@ -137,6 +151,7 @@ struct SettingsView: View {
             NavigationLink(value: Route.about) {
                 Label("About Simply Gurbani", systemImage: "info.circle")
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             Link(destination: URL(string: "https://banidb.com")!) {
                 HStack {
@@ -148,6 +163,7 @@ struct SettingsView: View {
                 }
             }
             .foregroundStyle(.primary)
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             Link(destination: URL(string: "https://github.com/KhsalakFoundation/banidb")!) {
                 HStack {
@@ -159,6 +175,7 @@ struct SettingsView: View {
                 }
             }
             .foregroundStyle(.primary)
+            .listRowBackground(AppTheme.Colors.cardBackground)
         } header: {
             Text("About")
         }
@@ -172,6 +189,7 @@ struct SettingsView: View {
                 Text("1.0.0")
                     .foregroundStyle(.secondary)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
 
             HStack {
                 Text("Build")
@@ -179,6 +197,7 @@ struct SettingsView: View {
                 Text("1")
                     .foregroundStyle(.secondary)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
         } footer: {
             VStack(spacing: AppTheme.Spacing.sm) {
                 Text("Built with love for the Sangat")
@@ -211,11 +230,13 @@ struct AboutView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, AppTheme.Spacing.xl)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             }
 
             Section {
                 Text("Simply Gurbani provides access to Sri Guru Granth Sahib Ji, Nitnem banis, and other sacred Sikh scriptures. All content is served via the BaniDB API.")
                     .font(AppTheme.Typography.subheadline)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("About")
             }
@@ -226,6 +247,7 @@ struct AboutView: View {
                     acknowledgementRow(name: "GurbaniNow", description: "Gurbani search and display")
                     acknowledgementRow(name: "Khalis Foundation", description: "Sikh technology nonprofit")
                 }
+                .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("Acknowledgements")
             }
@@ -240,10 +262,13 @@ struct AboutView: View {
                     Text("• Bhai Nand Lal Bani")
                 }
                 .font(AppTheme.Typography.subheadline)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("Scriptures")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("About")
     }
 

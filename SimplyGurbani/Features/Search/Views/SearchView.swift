@@ -39,6 +39,7 @@ struct SearchView: View {
                             }
                         }
                         .buttonStyle(.plain)
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                     }
                     .onDelete { indexSet in
                         // Remove from history
@@ -62,6 +63,7 @@ struct SearchView: View {
                     searchTip(icon: "number", text: "Enter ang number to jump to page")
                 }
                 .padding(.vertical, 8)
+                .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("Search Tips")
             }
@@ -72,10 +74,13 @@ struct SearchView: View {
                         Text(type.displayName).tag(type)
                     }
                 }
+                .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("Search Mode")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.Colors.backgroundBeige)
     }
 
     private func searchTip(icon: String, text: String) -> some View {
@@ -121,6 +126,7 @@ struct SearchView: View {
                         Text("\(viewModel.results.count) results")
                             .font(AppTheme.Typography.caption)
                             .foregroundStyle(.secondary)
+                            .listRowBackground(AppTheme.Colors.cardBackground)
                     }
 
                     ForEach(viewModel.results) { result in
@@ -130,8 +136,11 @@ struct SearchView: View {
                             SearchResultRow(result: result)
                         }
                         .buttonStyle(.plain)
+                        .listRowBackground(AppTheme.Colors.cardBackground)
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(AppTheme.Colors.backgroundBeige)
             }
         }
     }
@@ -192,9 +201,13 @@ struct SearchResultsView: View {
                         SearchResultRow(result: result)
                     }
                     .buttonStyle(.plain)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
                 }
+                .scrollContentBackground(.hidden)
+                .background(AppTheme.Colors.backgroundBeige)
             }
         }
+        .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("Results")
         .task {
             viewModel.searchText = query
