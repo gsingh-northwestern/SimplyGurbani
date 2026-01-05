@@ -112,7 +112,21 @@ NavigationStack(path: $router.browsePath) {
 - [x] Design system implemented
 - [x] Navigation setup complete
 - [x] Placeholder views for all features
-- [ ] API client implementation
-- [ ] Data models
-- [ ] SwiftData persistence
-- [ ] Full feature implementation
+- [x] API client implementation (APIClient actor)
+- [x] Data models (Verse, Shabad, Bani, Raag, Writer, Source, Hukamnama, SearchResult)
+- [x] GurbaniService for business logic
+- [x] ViewModels for Home, Reader, Search features
+- [x] Real Hukamnama from Sri Harmandir Sahib on Home screen
+- [x] Shabad/Bani reader with API integration
+- [x] Search functionality with history and multiple search types
+- [ ] SwiftData persistence/caching for offline access
+- [ ] Bookmarks feature implementation
+- [ ] Settings persistence
+- [ ] Unit tests
+
+## Recent Changes (v0.2.0)
+- Added BaniDB API integration
+- Home screen now displays real daily Hukamnama
+- Reader views fetch actual shabad/bani content
+- Search implemented with first-letter and full-word modes
+- All data models created matching BaniDB API structure
