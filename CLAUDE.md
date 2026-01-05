@@ -119,10 +119,18 @@ NavigationStack(path: $router.browsePath) {
 - [x] Real Hukamnama from Sri Harmandir Sahib on Home screen
 - [x] Shabad/Bani reader with API integration
 - [x] Search functionality with history and multiple search types
-- [ ] SwiftData persistence/caching for offline access
-- [ ] Bookmarks feature implementation
-- [ ] Settings persistence
+- [x] SwiftData persistence models (BookmarkedVerse, CachedShabad, etc.)
+- [x] Bookmarks feature with folders
+- [x] Enhanced Settings with typography controls
+- [ ] Offline caching implementation
 - [ ] Unit tests
+
+## Recent Changes (v0.3.0)
+- Added SwiftData container with persistence models
+- Implemented bookmarks feature with folder support
+- Added bookmark button to Reader views
+- Enhanced Settings with typography sliders and preview
+- Added cache management options
 
 ## Recent Changes (v0.2.0)
 - Added BaniDB API integration
