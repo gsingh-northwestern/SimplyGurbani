@@ -226,7 +226,7 @@ final class GurbaniService {
 
     func fetchAng(number: Int, sourceID: String = "G") async throws -> Shabad {
         let response = try await apiClient.fetchAng(number: number, sourceID: sourceID)
-        let shabad = Shabad.from(response: response)
+        let shabad = response.toShabad()
         cacheService?.cacheShabad(shabad)
         return shabad
     }

@@ -163,6 +163,10 @@ struct ContentView: View {
             CategorizedBaniListView()
         case .searchResults(let query):
             SearchResultsView(query: query)
+        case .raagList:
+            RaagListView()
+        case .writerList:
+            WriterListView()
         default:
             Text("Coming Soon")
         }

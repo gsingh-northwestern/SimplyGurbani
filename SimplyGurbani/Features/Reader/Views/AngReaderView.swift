@@ -105,6 +105,7 @@ struct AngReaderView: View {
                     .font(AppTheme.Typography.caption)
                     .foregroundStyle(.tertiary)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 

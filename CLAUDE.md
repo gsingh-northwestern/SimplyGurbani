@@ -137,7 +137,27 @@ NavigationStack(path: $router.browsePath) {
 - [x] New color palette implemented (beige, dark blue, light blue, burgundy)
 - [x] Consistent card styling with GlassCard throughout app
 - [x] Browse feature fully functional (SGGS, Raags, Writers, Banis)
+- [x] Dasam Granth bani category
+- [x] Quick Access icons on Home screen
+- [x] Full-width cards throughout app
 - [ ] Additional UI/UX polish
+
+## Recent Changes (v0.7.0)
+- **Browse Navigation Fixed**: Browse by Raag and Browse by Writer now work (was showing "Coming Soon")
+  - Added `raagList` and `writerList` cases to ContentView's navigation switch
+- **Dasam Granth Category**: New bani category for Dasam Granth compositions
+  - Jaap Sahib, Tav Prasad Svaiye, Chaupai Sahib moved from Nitnem to Dasam Granth
+  - Nitnem now only contains SGGS banis (Japji, Anand, Rehras, Sohila)
+  - New icon: `shield.lefthalf.filled`
+- **Quick Access Improvements**:
+  - Added SF Symbol icons to Quick Access tiles (sunrise, sunset, moon.stars, etc.)
+  - Replaced Asa Di Var with Chaupai Sahib
+  - Synced with Popular Banis section (both now have 6 banis including Chaupai Sahib)
+- **API Decoding Fixes**:
+  - Created `AngResponse` model for `/angs/:number` endpoint (was using wrong `ShabadResponse`)
+  - Fixed `SearchResponse.SearchVerse` to handle nested `source`, `writer`, `raag` objects
+- **Full-Width Cards**: All header cards now take full screen width
+  - Added `.frame(maxWidth: .infinity)` to VStacks in WriterShabadsView, AngReaderView, ReaderView
 
 ## Recent Changes (v0.6.0)
 - **Browse Feature Complete**: All 4 browse sections now fully functional

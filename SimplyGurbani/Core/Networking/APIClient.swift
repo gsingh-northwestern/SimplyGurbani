@@ -113,7 +113,7 @@ actor APIClient {
 
     // MARK: - Angs (Pages)
 
-    func fetchAng(number: Int, sourceID: String = "G") async throws -> ShabadResponse {
+    func fetchAng(number: Int, sourceID: String = "G") async throws -> AngResponse {
         let queryItems = [URLQueryItem(name: "source", value: sourceID)]
         return try await request("angs/\(number)", queryItems: queryItems)
     }

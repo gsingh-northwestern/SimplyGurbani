@@ -3,6 +3,7 @@ import Foundation
 /// Categories for organizing Banis
 enum BaniCategory: String, CaseIterable, Identifiable {
     case nitnem = "Nitnem"
+    case dasamGranth = "Dasam Granth"
     case majorWorks = "Major Works"
     case ceremonial = "Ceremonial"
     case other = "Other"
@@ -15,6 +16,8 @@ enum BaniCategory: String, CaseIterable, Identifiable {
         switch self {
         case .nitnem:
             return "Daily prayers recited by Sikhs"
+        case .dasamGranth:
+            return "Compositions from Sri Dasam Granth Sahib"
         case .majorWorks:
             return "Extended compositions for deep meditation"
         case .ceremonial:
@@ -28,6 +31,8 @@ enum BaniCategory: String, CaseIterable, Identifiable {
         switch self {
         case .nitnem:
             return "sun.max"
+        case .dasamGranth:
+            return "shield.lefthalf.filled"
         case .majorWorks:
             return "book.closed"
         case .ceremonial:
@@ -41,8 +46,11 @@ enum BaniCategory: String, CaseIterable, Identifiable {
     var baniIDs: Set<Int> {
         switch self {
         case .nitnem:
-            // Japji Sahib, Jaap Sahib, Tav Prasad Svaiye, Chaupai, Anand Sahib, Rehras, Sohila
-            return [2, 4, 6, 9, 10, 21, 23]
+            // Japji Sahib, Anand Sahib, Rehras, Sohila (SGGS banis only)
+            return [2, 10, 21, 23]
+        case .dasamGranth:
+            // Jaap Sahib, Tav Prasad Svaiye, Chaupai Sahib
+            return [4, 6, 9]
         case .majorWorks:
             // Sukhmani Sahib, Asa di Var, Shabadh Hazare
             return [31, 90, 3]

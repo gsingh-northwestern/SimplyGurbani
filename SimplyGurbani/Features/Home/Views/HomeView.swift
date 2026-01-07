@@ -142,7 +142,7 @@ struct QuickAccessGrid: View {
         .kirtanSohila,
         .sukhmaniSahib,
         .anandSahib,
-        .asaDiVar
+        .chaupaiSahib
     ]
 
     var body: some View {
@@ -155,25 +155,29 @@ struct QuickAccessGrid: View {
                 Button {
                     router.navigateToBani(bani.rawValue)
                 } label: {
-                    Text(bani.displayName)
-                        .font(AppTheme.Typography.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.white)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .frame(minHeight: 40)
-                        .padding(AppTheme.Spacing.md)
-                        .background(
-                            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
-                                .fill(AppTheme.Colors.accentDarkBlue)
-                        )
-                        .shadow(
-                            color: AppTheme.Colors.accentDarkBlue.opacity(0.2),
-                            radius: 6,
-                            x: 0,
-                            y: 3
-                        )
+                    VStack(spacing: 6) {
+                        Image(systemName: bani.icon)
+                            .font(.title2)
+                        Text(bani.displayName)
+                            .font(AppTheme.Typography.caption)
+                            .fontWeight(.medium)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 70)
+                    .padding(AppTheme.Spacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.CornerRadius.large)
+                            .fill(AppTheme.Colors.accentDarkBlue)
+                    )
+                    .shadow(
+                        color: AppTheme.Colors.accentDarkBlue.opacity(0.2),
+                        radius: 6,
+                        x: 0,
+                        y: 3
+                    )
                 }
                 .buttonStyle(.plain)
             }

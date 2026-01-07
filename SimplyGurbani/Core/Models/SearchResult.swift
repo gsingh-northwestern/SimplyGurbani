@@ -38,9 +38,9 @@ struct SearchResponse: Codable, Sendable {
         let transliteration: TranslitContent?
         let translation: TransContent?
         let pageNo: Int
-        let sourceId: String
-        let writerId: Int?
-        let raagId: Int?
+        let source: SourceInfo?
+        let writer: WriterInfo?
+        let raag: RaagInfo?
 
         struct VerseContent: Codable, Sendable {
             let gurmukhi: String
@@ -49,6 +49,7 @@ struct SearchResponse: Codable, Sendable {
 
         struct TranslitContent: Codable, Sendable {
             let en: String?
+            let english: String?
         }
 
         struct TransContent: Codable, Sendable {
@@ -60,18 +61,30 @@ struct SearchResponse: Codable, Sendable {
             }
         }
 
+        struct SourceInfo: Codable, Sendable {
+            let sourceId: String
+        }
+
+        struct WriterInfo: Codable, Sendable {
+            let writerId: Int
+        }
+
+        struct RaagInfo: Codable, Sendable {
+            let raagId: Int
+        }
+
         func toSearchResult() -> SearchResult {
             SearchResult(
                 id: verseId,
                 shabadID: shabadId,
                 gurmukhi: verse.gurmukhi,
                 gurmukhiUnicode: verse.unicode,
-                transliteration: transliteration?.en,
+                transliteration: transliteration?.en ?? transliteration?.english,
                 translation: translation?.en?.bdb ?? translation?.en?.ssk,
                 ang: pageNo,
-                sourceID: sourceId,
-                writerID: writerId,
-                raagID: raagId
+                sourceID: source?.sourceId ?? "G",
+                writerID: writer?.writerId,
+                raagID: raag?.raagId
             )
         }
     }

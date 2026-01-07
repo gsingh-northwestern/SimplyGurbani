@@ -81,6 +81,12 @@ struct BrowseView: View {
                                 icon: "sparkles",
                                 destination: Route.baniReader(baniID: WellKnownBani.anandSahib.rawValue)
                             )
+                            Divider().padding(.leading, 52)
+                            BrowseRowLink(
+                                title: "Chaupai Sahib",
+                                icon: "shield",
+                                destination: Route.baniReader(baniID: WellKnownBani.chaupaiSahib.rawValue)
+                            )
                         }
                     }
                     .padding(.horizontal)

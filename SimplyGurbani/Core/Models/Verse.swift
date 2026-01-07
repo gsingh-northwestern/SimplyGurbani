@@ -133,6 +133,90 @@ struct Verse: Identifiable, Decodable, Hashable, Sendable {
 
 // MARK: - BaniDB API Response Models
 
+/// Response wrapper for ang/page endpoint
+struct AngResponse: Codable, Sendable {
+    let source: SourceInfo
+    let count: Int
+    let navigation: Navigation?
+    let page: [AngVerse]
+
+    struct SourceInfo: Codable, Sendable {
+        let sourceId: String
+        let gurmukhi: String
+        let unicode: String
+        let english: String
+        let pageNo: Int
+    }
+
+    struct Navigation: Codable, Sendable {
+        let previous: Int?
+        let next: Int?
+    }
+
+    struct AngVerse: Codable, Sendable {
+        let verseId: Int
+        let shabadId: Int
+        let verse: VerseContent
+        let larivaar: VerseContent?
+        let translation: Translation?
+        let transliteration: Transliteration?
+        let pageNo: Int
+        let lineNo: Int?
+
+        struct VerseContent: Codable, Sendable {
+            let gurmukhi: String
+            let unicode: String
+        }
+
+        struct Translation: Codable, Sendable {
+            let en: TranslationSources?
+
+            struct TranslationSources: Codable, Sendable {
+                let bdb: String?
+                let ms: String?
+                let ssk: String?
+            }
+        }
+
+        struct Transliteration: Codable, Sendable {
+            let english: String?
+            let en: String?
+
+            var englishText: String? {
+                english ?? en
+            }
+        }
+
+        func toVerse() -> Verse {
+            Verse(
+                id: verseId,
+                shabadID: shabadId,
+                gurmukhi: verse.gurmukhi,
+                gurmukhiUnicode: verse.unicode,
+                larivaar: larivaar?.gurmukhi,
+                larivaarUnicode: larivaar?.unicode,
+                transliteration: transliteration?.englishText,
+                translation: translation?.en?.bdb ?? translation?.en?.ssk ?? translation?.en?.ms,
+                sourceID: "G",
+                ang: pageNo
+            )
+        }
+    }
+
+    /// Convert to Shabad for compatibility with existing code
+    func toShabad() -> Shabad {
+        Shabad(
+            id: page.first?.shabadId ?? 0,
+            sourceID: source.sourceId,
+            sourceName: source.english,
+            ang: source.pageNo,
+            writer: nil,
+            raag: nil,
+            verses: page.map { $0.toVerse() }
+        )
+    }
+}
+
 /// Response wrapper for shabad endpoint
 struct ShabadResponse: Codable, Sendable {
     let shabadInfo: ShabadInfo

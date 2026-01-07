@@ -107,6 +107,7 @@ struct ReaderView: View {
                 .font(AppTheme.Typography.caption)
                 .foregroundStyle(.tertiary)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -318,6 +319,7 @@ struct HukamnamaDetailView: View {
                                     .font(AppTheme.Typography.caption)
                                     .foregroundStyle(AppTheme.Colors.goldFallback)
                             }
+                            .frame(maxWidth: .infinity)
                         }
 
                         // Content
