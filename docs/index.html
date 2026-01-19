@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simply Gurbani - Daily Sikh Prayers & Gurbani</title>
+    <style>
+        :root {
+            --background: #FDF0D5;
+            --card: #FFFEF7;
+            --primary: #AB364D;
+            --text-primary: #003049;
+            --text-secondary: #669BBC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 8px;
+        }
+
+        .links {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .links a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .gurmukhi {
+            font-size: 1.1rem;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="app-icon.png" alt="Simply Gurbani" class="app-icon">
+            <h1>Simply Gurbani</h1>
+            <p class="subtitle">Daily Sikh Prayers & Gurbani</p>
+        </header>
+
+        <div class="card">
+            <h2>About</h2>
+            <p>Simply Gurbani brings the sacred scriptures of Sikhism to your fingertips with a beautiful, minimalist design. Whether you're performing your daily Nitnem, studying Gurbani, or seeking spiritual guidance, Simply Gurbani provides everything you need in one elegant app.</p>
+        </div>
+
+        <div class="card">
+            <h2>Features</h2>
+            <ul>
+                <li>Daily Hukamnama from Sri Harmandir Sahib</li>
+                <li>Complete Sri Guru Granth Sahib Ji (1430 Angs)</li>
+                <li>Popular Banis including Japji Sahib, Rehras Sahib, and more</li>
+                <li>Gurmukhi text with English transliteration and translation</li>
+                <li>Bookmark your favorite verses</li>
+                <li>Reading position tracking</li>
+                <li>Search Gurbani by keywords</li>
+                <li>Offline caching for reading without internet</li>
+                <li>Beautiful, minimalist design</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Privacy</h2>
+            <p>Simply Gurbani respects your privacy. No personal data is collected, no analytics or tracking, and no advertisements. All your bookmarks and reading progress are stored locally on your device.</p>
+        </div>
+
+        <div class="links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/gsingh-northwestern/SimplyGurbani/issues">Support</a>
+        </div>
+
+        <footer>
+            <p class="gurmukhi">ਵਾਹਿਗੁਰੂ ਜੀ ਕਾ ਖ਼ਾਲਸਾ, ਵਾਹਿਗੁਰੂ ਜੀ ਕੀ ਫ਼ਤਿਹ</p>
+            <p>Waheguru Ji Ka Khalsa, Waheguru Ji Ki Fateh</p>
+            <p style="margin-top: 16px;">&copy; 2026 Simply Gurbani</p>
+        </footer>
+    </div>
+</body>
+</html>
