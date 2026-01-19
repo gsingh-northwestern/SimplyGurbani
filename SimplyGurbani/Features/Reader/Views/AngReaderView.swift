@@ -8,6 +8,13 @@ struct AngReaderView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
+    @State private var scrollPosition: Int?  // Track topmost verse ID
+
+    // Display settings from UserDefaults - synced with Settings
+    @AppStorage("showGurmukhi") private var showGurmukhi = true
+    @AppStorage("showTransliteration") private var showTransliteration = true
+    @AppStorage("showEnglish") private var showTranslation = true
+    @AppStorage("useLarivaar") private var useLarivaar = false
 
     var body: some View {
         Group {
@@ -44,7 +51,24 @@ struct AngReaderView: View {
         .task {
             await viewModel.loadAng(number: angNumber, sourceID: sourceID)
             viewModel.configureBookmarks(with: modelContext)
+            viewModel.configureReadingPosition(with: modelContext)
             viewModel.refreshBookmarkStatus()
+
+            // Restore saved scroll position
+            if let savedPosition = viewModel.getSavedScrollPosition() {
+                scrollPosition = savedPosition
+            }
+        }
+        .onChange(of: scrollPosition) { oldValue, newValue in
+            if let newValue = newValue {
+                viewModel.saveScrollPosition(newValue)
+            }
+        }
+        .onChange(of: viewModel.currentAngNumber) { oldValue, newValue in
+            // Clear position when navigating to different ang
+            if oldValue != newValue {
+                scrollPosition = nil
+            }
         }
     }
 
@@ -67,11 +91,12 @@ struct AngReaderView: View {
                 ForEach(viewModel.verses) { verse in
                     VerseCardView(
                         verse: verse,
-                        showGurmukhi: viewModel.showGurmukhi,
-                        showTransliteration: viewModel.showTransliteration,
-                        showTranslation: viewModel.showTranslation,
-                        useLarivaar: viewModel.useLarivaar
+                        showGurmukhi: showGurmukhi,
+                        showTransliteration: showTransliteration,
+                        showTranslation: showTranslation,
+                        useLarivaar: useLarivaar
                     )
+                    .id(verse.id)  // Enable scroll position tracking
                 }
 
                 // Pagination
@@ -81,7 +106,9 @@ struct AngReaderView: View {
                 footerView
             }
             .padding()
+            .scrollTargetLayout()  // iOS 17: Enable position tracking
         }
+        .scrollPosition(id: $scrollPosition, anchor: .top)  // iOS 17: Track top verse
     }
 
     private var headerView: some View {
@@ -174,14 +201,14 @@ struct AngReaderView: View {
 
     private var toolbarMenu: some View {
         Menu {
-            Toggle("Gurmukhi", isOn: $viewModel.showGurmukhi)
-            Toggle("Transliteration", isOn: $viewModel.showTransliteration)
-            Toggle("Translation", isOn: $viewModel.showTranslation)
-            Toggle("Larivaar", isOn: $viewModel.useLarivaar)
+            Toggle("Gurmukhi", isOn: $showGurmukhi)
+            Toggle("Transliteration", isOn: $showTransliteration)
+            Toggle("Translation", isOn: $showTranslation)
+            Toggle("Larivaar", isOn: $useLarivaar)
 
             Divider()
 
-            ShareLink(item: viewModel.shareText()) {
+            ShareLink(item: viewModel.shareText(showTransliteration: showTransliteration, showTranslation: showTranslation)) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
         } label: {

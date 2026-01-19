@@ -15,10 +15,11 @@ final class BookmarkService {
     // MARK: - Bookmarks
 
     /// Add a verse to bookmarks
-    func bookmarkVerse(_ verse: Verse, folderName: String? = nil, notes: String? = nil) {
+    func bookmarkVerse(_ verse: Verse, baniID: Int? = nil, folderName: String? = nil, notes: String? = nil) {
         let bookmark = BookmarkedVerse(
             verseID: verse.id,
             shabadID: verse.shabadID,
+            baniID: baniID,
             gurmukhiUnicode: verse.gurmukhiUnicode,
             transliteration: verse.transliteration,
             translation: verse.translation,

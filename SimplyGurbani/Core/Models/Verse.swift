@@ -232,7 +232,7 @@ struct ShabadResponse: Codable, Sendable {
         struct SourceInfo: Codable, Sendable {
             let sourceId: String
             let gurmukhi: String
-            let unicode: String
+            let unicode: String?  // Optional - API can return null
             let english: String
             let pageNo: Int
         }
@@ -240,14 +240,14 @@ struct ShabadResponse: Codable, Sendable {
         struct RaagInfo: Codable, Sendable {
             let raagId: Int
             let gurmukhi: String
-            let unicode: String
+            let unicode: String?  // Optional - API can return null
             let english: String
         }
 
         struct WriterInfo: Codable, Sendable {
             let writerId: Int
             let gurmukhi: String
-            let unicode: String
+            let unicode: String?  // Optional - API can return null
             let english: String
         }
     }
@@ -263,7 +263,7 @@ struct APIVerse: Codable, Sendable {
     let transliteration: Transliteration?
     let pageNo: Int
     let lineNo: Int
-    let sourceId: String
+    let sourceId: String?  // Optional - not present in all API responses
 
     struct VerseContent: Codable, Sendable {
         let gurmukhi: String
@@ -272,8 +272,8 @@ struct APIVerse: Codable, Sendable {
 
     struct Translation: Codable, Sendable {
         let en: TranslationSources?
-        let pu: TranslationSources?
-        let es: TranslationSources?
+        // Note: pu (Punjabi) and es (Spanish) have different structures (nested dicts)
+        // and are not used by the app, so they're omitted to avoid decoding issues
 
         struct TranslationSources: Codable, Sendable {
             let bdb: String?
@@ -303,7 +303,7 @@ struct APIVerse: Codable, Sendable {
             larivaarUnicode: larivaar?.unicode,
             transliteration: transliteration?.englishText,
             translation: translation?.en?.bdb ?? translation?.en?.ssk ?? translation?.en?.ms,
-            sourceID: sourceId,
+            sourceID: sourceId ?? "G",  // Default to SGGS
             ang: pageNo
         )
     }

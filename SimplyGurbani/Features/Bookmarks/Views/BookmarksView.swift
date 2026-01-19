@@ -100,7 +100,12 @@ struct BookmarksView: View {
                 Section(viewModel.selectedFolder ?? "Saved Verses") {
                     ForEach(viewModel.bookmarks, id: \.verseID) { bookmark in
                         Button {
-                            router.bookmarksPath.append(.shabadReader(shabadID: bookmark.shabadID))
+                            // Navigate to bani if baniID exists, otherwise to shabad
+                            if let baniID = bookmark.baniID {
+                                router.bookmarksPath.append(.baniReader(baniID: baniID, scrollToVerseID: bookmark.verseID))
+                            } else if bookmark.shabadID > 0 {
+                                router.bookmarksPath.append(.shabadReader(shabadID: bookmark.shabadID, scrollToVerseID: bookmark.verseID))
+                            }
                         } label: {
                             BookmarkRow(bookmark: bookmark)
                         }
@@ -199,7 +204,15 @@ struct BookmarkRow: View {
             }
 
             HStack {
-                Text("Ang \(bookmark.ang)")
+                // Show bani name if from a bani, otherwise show ang
+                if let baniID = bookmark.baniID,
+                   let baniName = WellKnownBani(rawValue: baniID)?.displayName {
+                    Text(baniName)
+                } else if bookmark.ang > 0 {
+                    Text("Ang \(bookmark.ang)")
+                } else {
+                    Text("Bookmark")
+                }
                 Spacer()
                 if let folder = bookmark.folderName {
                     Label(folder, systemImage: "folder")

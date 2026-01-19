@@ -7,6 +7,7 @@ import Observation
 final class ReaderViewModel {
     private let gurbaniService: GurbaniService
     private var bookmarkService: BookmarkService?
+    private var readingPositionService: ReadingPositionService?
 
     // Content
     private(set) var shabad: Shabad?
@@ -25,11 +26,8 @@ final class ReaderViewModel {
     var selectedVerseForBookmark: Verse?
     var isShowingBookmarkSheet = false
 
-    // Display settings
-    var showGurmukhi = true
-    var showTransliteration = true
-    var showTranslation = true
-    var useLarivaar = false
+    // Scroll tracking
+    private(set) var scrollPosition: Int?  // Current top verse ID
 
     init(gurbaniService: GurbaniService = .shared) {
         self.gurbaniService = gurbaniService
@@ -38,6 +36,66 @@ final class ReaderViewModel {
     func configureBookmarks(with modelContext: ModelContext) {
         self.bookmarkService = BookmarkService(modelContext: modelContext)
         refreshBookmarkStatus()
+    }
+
+    func configureReadingPosition(with modelContext: ModelContext) {
+        self.readingPositionService = ReadingPositionService(modelContext: modelContext)
+    }
+
+    // MARK: - Reading Position Management
+
+    /// Get saved scroll position for current content
+    func getSavedScrollPosition() -> Int? {
+        guard let service = readingPositionService else { return nil }
+
+        if let shabad = shabad {
+            return service.getPosition(contentType: "shabad", contentID: shabad.id)?.topVisibleVerseID
+        } else if let bani = baniContent {
+            return service.getPosition(contentType: "bani", contentID: bani.id)?.topVisibleVerseID
+        } else if let angNum = currentAngNumber {
+            return service.getPosition(contentType: "ang", contentID: angNum, sourceID: currentSourceID ?? "G")?.topVisibleVerseID
+        }
+        return nil
+    }
+
+    /// Save current scroll position
+    func saveScrollPosition(_ verseID: Int) {
+        guard let service = readingPositionService else { return }
+
+        self.scrollPosition = verseID
+
+        // Get the verse for preview
+        guard let verse = verses.first(where: { $0.id == verseID }) else { return }
+
+        if let shabad = shabad {
+            service.savePosition(
+                contentType: "shabad",
+                contentID: shabad.id,
+                topVisibleVerseID: verseID,
+                displayName: title,
+                gurmukhiPreview: verse.gurmukhiUnicode,
+                transliterationPreview: verse.transliteration
+            )
+        } else if let bani = baniContent {
+            service.savePosition(
+                contentType: "bani",
+                contentID: bani.id,
+                topVisibleVerseID: verseID,
+                displayName: title,
+                gurmukhiPreview: verse.gurmukhiUnicode,
+                transliterationPreview: verse.transliteration
+            )
+        } else if let angNum = currentAngNumber {
+            service.savePosition(
+                contentType: "ang",
+                contentID: angNum,
+                sourceID: currentSourceID ?? "G",
+                topVisibleVerseID: verseID,
+                displayName: title,
+                gurmukhiPreview: verse.gurmukhiUnicode,
+                transliterationPreview: verse.transliteration
+            )
+        }
     }
 
     // MARK: - Load Shabad
@@ -137,7 +195,11 @@ final class ReaderViewModel {
         if let shabad {
             return "Ang \(shabad.ang)"
         } else if let bani = baniContent {
-            // Prefer English transliteration for nav title, fallback to Unicode
+            // Use proper capitalized name for well-known banis
+            if let wellKnownBani = WellKnownBani(rawValue: bani.id) {
+                return wellKnownBani.displayName
+            }
+            // Fall back to transliteration or Unicode name for other banis
             return bani.transliteration ?? bani.nameUnicode
         }
         return "Loading..."
@@ -154,7 +216,7 @@ final class ReaderViewModel {
 
     // MARK: - Share
 
-    func shareText() -> String {
+    func shareText(showTransliteration: Bool, showTranslation: Bool) -> String {
         var content = ""
 
         for verse in verses {
@@ -195,14 +257,16 @@ final class ReaderViewModel {
             service.removeBookmark(verseID: verse.id)
             bookmarkedVerseIDs.remove(verse.id)
         } else {
-            service.bookmarkVerse(verse)
+            // Pass baniID if we're viewing a bani
+            service.bookmarkVerse(verse, baniID: baniContent?.id)
             bookmarkedVerseIDs.insert(verse.id)
         }
     }
 
     func bookmarkVerse(_ verse: Verse, folderName: String? = nil, notes: String? = nil) {
         guard let service = bookmarkService else { return }
-        service.bookmarkVerse(verse, folderName: folderName, notes: notes)
+        // Pass baniID if we're viewing a bani
+        service.bookmarkVerse(verse, baniID: baniContent?.id, folderName: folderName, notes: notes)
         bookmarkedVerseIDs.insert(verse.id)
     }
 
@@ -210,14 +274,37 @@ final class ReaderViewModel {
         bookmarkService?.getAllFolders() ?? []
     }
 
-    /// Bookmark the first verse of the shabad (quick bookmark)
-    func bookmarkFirstVerse() {
-        guard let verse = verses.first else { return }
+    /// Bookmark the currently visible top verse (tile-based bookmarking)
+    func bookmarkTopVerse() {
+        guard let service = bookmarkService else { return }
+
+        // Use the currently tracked scroll position
+        let verseID = scrollPosition ?? verses.first?.id
+        guard let verseID = verseID,
+              let verse = verses.first(where: { $0.id == verseID }) else {
+            // Fallback to first verse if position unknown
+            guard let firstVerse = verses.first else { return }
+            toggleBookmark(for: firstVerse)
+            return
+        }
+
         toggleBookmark(for: verse)
     }
 
+    /// Bookmark the first verse of the shabad (quick bookmark) - redirects to tile-based bookmarking
+    func bookmarkFirstVerse() {
+        bookmarkTopVerse()
+    }
+
+    /// Check if the topmost visible verse is bookmarked
+    var isTopVerseBookmarked: Bool {
+        let verseID = scrollPosition ?? verses.first?.id
+        guard let verseID = verseID else { return false }
+        return bookmarkedVerseIDs.contains(verseID)
+    }
+
+    /// Legacy property for backwards compatibility
     var isFirstVerseBookmarked: Bool {
-        guard let verse = verses.first else { return false }
-        return isVerseBookmarked(verse)
+        isTopVerseBookmarked
     }
 }

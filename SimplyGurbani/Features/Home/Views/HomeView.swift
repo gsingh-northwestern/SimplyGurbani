@@ -20,33 +20,8 @@ struct HomeView: View {
                     QuickAccessGrid()
                 }
 
-                // Recent Activity
-                VStack(alignment: .leading, spacing: AppTheme.Spacing.md) {
-                    Text("Continue Reading")
-                        .font(AppTheme.Typography.title3)
-                        .padding(.horizontal)
-
-                    Button {
-                        router.navigateToBani(WellKnownBani.japjiSahib.rawValue)
-                    } label: {
-                        GlassCard {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Japji Sahib")
-                                        .font(AppTheme.Typography.headline)
-                                    Text("Start reading")
-                                        .font(AppTheme.Typography.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal)
-                }
+                // Continue Reading
+                ContinueReadingSection()
             }
             .padding(.vertical)
         }
@@ -105,8 +80,8 @@ struct HukamnamaCard: View {
                                 .lineLimit(3)
                                 .multilineTextAlignment(.center)
 
-                            if let transliteration = hukamnama.transliteration {
-                                Text(transliteration)
+                            if let translation = hukamnama.translation {
+                                Text(translation)
                                     .font(AppTheme.Typography.caption)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(2)

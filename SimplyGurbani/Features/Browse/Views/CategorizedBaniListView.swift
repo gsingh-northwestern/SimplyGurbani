@@ -90,11 +90,9 @@ struct CategorizedBaniListView: View {
                 Text(bani.gurmukhiUnicode)
                     .font(.system(size: 18))
                     .foregroundStyle(AppTheme.Colors.textPrimary)
-                if let transliteration = bani.transliteration {
-                    Text(transliteration)
-                        .font(AppTheme.Typography.subheadline)
-                        .foregroundStyle(.secondary)
-                }
+                Text(bani.displayName)
+                    .font(AppTheme.Typography.subheadline)
+                    .foregroundStyle(.secondary)
             }
             Spacer()
             Image(systemName: "chevron.right")

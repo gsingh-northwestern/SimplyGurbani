@@ -17,7 +17,8 @@ struct SimplyGurbaniApp: App {
                 BookmarkFolder.self,
                 CachedShabad.self,
                 CachedBani.self,
-                CachedHukamnama.self
+                CachedHukamnama.self,
+                ReadingPosition.self
             ])
             let configuration = ModelConfiguration(
                 schema: schema,

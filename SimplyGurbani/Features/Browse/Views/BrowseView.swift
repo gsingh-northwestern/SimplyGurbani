@@ -181,11 +181,9 @@ struct BaniListView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(bani.gurmukhiUnicode)
                                 .font(.system(size: 18))
-                            if let transliteration = bani.transliteration {
-                                Text(transliteration)
-                                    .font(AppTheme.Typography.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text(bani.displayName)
+                                .font(AppTheme.Typography.subheadline)
+                                .foregroundStyle(.secondary)
                         }
                         .padding(.vertical, 4)
                     }

@@ -36,7 +36,7 @@ struct Shabad: Identifiable, Hashable, Sendable {
             Writer(
                 id: $0.writerId,
                 gurmukhi: $0.gurmukhi,
-                gurmukhiUnicode: $0.unicode,
+                gurmukhiUnicode: $0.unicode ?? $0.gurmukhi,  // Fallback to gurmukhi if unicode is null
                 english: $0.english
             )
         }
@@ -45,7 +45,7 @@ struct Shabad: Identifiable, Hashable, Sendable {
             Raag(
                 id: $0.raagId,
                 gurmukhi: $0.gurmukhi,
-                gurmukhiUnicode: $0.unicode,
+                gurmukhiUnicode: $0.unicode ?? $0.gurmukhi,  // Fallback to gurmukhi if unicode is null
                 english: $0.english
             )
         }

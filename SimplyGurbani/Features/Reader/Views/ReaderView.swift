@@ -3,9 +3,22 @@ import SwiftData
 
 struct ReaderView: View {
     let shabadID: Int
+    let scrollToVerseID: Int?
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
+    @State private var scrollPosition: Int?  // Track topmost verse ID
+
+    // Display settings from UserDefaults - synced with Settings
+    @AppStorage("showGurmukhi") private var showGurmukhi = true
+    @AppStorage("showTransliteration") private var showTransliteration = true
+    @AppStorage("showEnglish") private var showTranslation = true
+    @AppStorage("useLarivaar") private var useLarivaar = false
+
+    init(shabadID: Int, scrollToVerseID: Int? = nil) {
+        self.shabadID = shabadID
+        self.scrollToVerseID = scrollToVerseID
+    }
 
     var body: some View {
         Group {
@@ -42,7 +55,20 @@ struct ReaderView: View {
         .task {
             await viewModel.loadShabad(id: shabadID)
             viewModel.configureBookmarks(with: modelContext)
+            viewModel.configureReadingPosition(with: modelContext)
             viewModel.refreshBookmarkStatus()
+
+            // Scroll to bookmarked verse if provided, otherwise restore saved position
+            if let scrollToVerseID = scrollToVerseID {
+                scrollPosition = scrollToVerseID
+            } else if let savedPosition = viewModel.getSavedScrollPosition() {
+                scrollPosition = savedPosition
+            }
+        }
+        .onChange(of: scrollPosition) { oldValue, newValue in
+            if let newValue = newValue {
+                viewModel.saveScrollPosition(newValue)
+            }
         }
     }
 
@@ -67,11 +93,12 @@ struct ReaderView: View {
                 ForEach(viewModel.verses) { verse in
                     VerseCardView(
                         verse: verse,
-                        showGurmukhi: viewModel.showGurmukhi,
-                        showTransliteration: viewModel.showTransliteration,
-                        showTranslation: viewModel.showTranslation,
-                        useLarivaar: viewModel.useLarivaar
+                        showGurmukhi: showGurmukhi,
+                        showTransliteration: showTransliteration,
+                        showTranslation: showTranslation,
+                        useLarivaar: useLarivaar
                     )
+                    .id(verse.id)  // Enable scroll position tracking
                 }
 
                 // Footer
@@ -80,7 +107,9 @@ struct ReaderView: View {
                 }
             }
             .padding()
+            .scrollTargetLayout()  // iOS 17: Enable position tracking
         }
+        .scrollPosition(id: $scrollPosition, anchor: .top)  // iOS 17: Track top verse
     }
 
     private func headerView(shabad: Shabad) -> some View {
@@ -124,14 +153,14 @@ struct ReaderView: View {
 
     private var toolbarMenu: some View {
         Menu {
-            Toggle("Gurmukhi", isOn: $viewModel.showGurmukhi)
-            Toggle("Transliteration", isOn: $viewModel.showTransliteration)
-            Toggle("Translation", isOn: $viewModel.showTranslation)
-            Toggle("Larivaar", isOn: $viewModel.useLarivaar)
+            Toggle("Gurmukhi", isOn: $showGurmukhi)
+            Toggle("Transliteration", isOn: $showTransliteration)
+            Toggle("Translation", isOn: $showTranslation)
+            Toggle("Larivaar", isOn: $useLarivaar)
 
             Divider()
 
-            ShareLink(item: viewModel.shareText()) {
+            ShareLink(item: viewModel.shareText(showTransliteration: showTransliteration, showTranslation: showTranslation)) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
         } label: {
@@ -142,9 +171,22 @@ struct ReaderView: View {
 
 struct BaniReaderView: View {
     let baniID: Int
+    let scrollToVerseID: Int?
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
+    @State private var scrollPosition: Int?  // Track topmost verse ID
+
+    // Display settings from UserDefaults - synced with Settings
+    @AppStorage("showGurmukhi") private var showGurmukhi = true
+    @AppStorage("showTransliteration") private var showTransliteration = true
+    @AppStorage("showEnglish") private var showTranslation = true
+    @AppStorage("useLarivaar") private var useLarivaar = false
+
+    init(baniID: Int, scrollToVerseID: Int? = nil) {
+        self.baniID = baniID
+        self.scrollToVerseID = scrollToVerseID
+    }
 
     var body: some View {
         Group {
@@ -181,7 +223,20 @@ struct BaniReaderView: View {
         .task {
             await viewModel.loadBani(id: baniID)
             viewModel.configureBookmarks(with: modelContext)
+            viewModel.configureReadingPosition(with: modelContext)
             viewModel.refreshBookmarkStatus()
+
+            // Scroll to bookmarked verse if provided, otherwise restore saved position
+            if let scrollToVerseID = scrollToVerseID {
+                scrollPosition = scrollToVerseID
+            } else if let savedPosition = viewModel.getSavedScrollPosition() {
+                scrollPosition = savedPosition
+            }
+        }
+        .onChange(of: scrollPosition) { oldValue, newValue in
+            if let newValue = newValue {
+                viewModel.saveScrollPosition(newValue)
+            }
         }
     }
 
@@ -205,11 +260,9 @@ struct BaniReaderView: View {
                                 .font(.system(size: 24))
                                 .foregroundStyle(AppTheme.Colors.saffronFallback)
 
-                            if let translit = bani.transliteration {
-                                Text(translit)
-                                    .font(AppTheme.Typography.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text(bani.displayName)
+                                .font(AppTheme.Typography.subheadline)
+                                .foregroundStyle(.secondary)
 
                             Text("\(bani.verses.count) verses")
                                 .font(AppTheme.Typography.caption)
@@ -223,27 +276,30 @@ struct BaniReaderView: View {
                 ForEach(viewModel.verses) { verse in
                     VerseCardView(
                         verse: verse,
-                        showGurmukhi: viewModel.showGurmukhi,
-                        showTransliteration: viewModel.showTransliteration,
-                        showTranslation: viewModel.showTranslation,
-                        useLarivaar: viewModel.useLarivaar
+                        showGurmukhi: showGurmukhi,
+                        showTransliteration: showTransliteration,
+                        showTranslation: showTranslation,
+                        useLarivaar: useLarivaar
                     )
+                    .id(verse.id)  // Enable scroll position tracking
                 }
             }
             .padding()
+            .scrollTargetLayout()  // iOS 17: Enable position tracking
         }
+        .scrollPosition(id: $scrollPosition, anchor: .top)  // iOS 17: Track top verse
     }
 
     private var toolbarMenu: some View {
         Menu {
-            Toggle("Gurmukhi", isOn: $viewModel.showGurmukhi)
-            Toggle("Transliteration", isOn: $viewModel.showTransliteration)
-            Toggle("Translation", isOn: $viewModel.showTranslation)
-            Toggle("Larivaar", isOn: $viewModel.useLarivaar)
+            Toggle("Gurmukhi", isOn: $showGurmukhi)
+            Toggle("Transliteration", isOn: $showTransliteration)
+            Toggle("Translation", isOn: $showTranslation)
+            Toggle("Larivaar", isOn: $useLarivaar)
 
             Divider()
 
-            ShareLink(item: viewModel.shareText()) {
+            ShareLink(item: viewModel.shareText(showTransliteration: showTransliteration, showTranslation: showTranslation)) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
         } label: {

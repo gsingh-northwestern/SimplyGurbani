@@ -1,7 +1,14 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
+
+    // Alert state
+    @State private var cacheRefreshTrigger = false
+    @State private var showClearedAlert = false
+    @State private var clearedAlertMessage = ""
 
     // Display settings
     @AppStorage("showGurmukhi") private var showGurmukhi = true
@@ -26,12 +33,16 @@ struct SettingsView: View {
             typographySection
             searchSection
             cacheSection
-            aboutSection
             versionSection
         }
         .scrollContentBackground(.hidden)
         .background(AppTheme.Colors.backgroundBeige)
         .navigationTitle("Settings")
+        .alert("Done", isPresented: $showClearedAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(clearedAlertMessage)
+        }
     }
 
     private var displaySection: some View {
@@ -123,61 +134,38 @@ struct SettingsView: View {
         Section {
             Button("Clear Search History") {
                 UserDefaults.standard.removeObject(forKey: "searchHistory")
+                clearedAlertMessage = "Search history cleared"
+                showClearedAlert = true
             }
             .listRowBackground(AppTheme.Colors.cardBackground)
 
             Button("Clear Cached Content") {
                 GurbaniService.shared.clearCache()
+                // Also clear reading history (Continue Reading)
+                let readingPositionService = ReadingPositionService(modelContext: modelContext)
+                readingPositionService.clearHistory()
+                cacheRefreshTrigger.toggle()
+                clearedAlertMessage = "Cached content cleared"
+                showClearedAlert = true
             }
             .foregroundStyle(.red)
             .listRowBackground(AppTheme.Colors.cardBackground)
 
-            if let stats = GurbaniService.shared.cacheStats {
-                HStack {
-                    Text("Cached Items")
-                    Spacer()
+            HStack {
+                Text("Cached Items")
+                Spacer()
+                if let stats = GurbaniService.shared.cacheStats {
                     Text("\(stats.shabads) shabads, \(stats.banis) banis")
                         .foregroundStyle(.secondary)
+                } else {
+                    Text("0 shabads, 0 banis")
+                        .foregroundStyle(.secondary)
                 }
-                .listRowBackground(AppTheme.Colors.cardBackground)
             }
+            .listRowBackground(AppTheme.Colors.cardBackground)
+            .id(cacheRefreshTrigger)
         } header: {
             Text("Data")
-        }
-    }
-
-    private var aboutSection: some View {
-        Section {
-            NavigationLink(value: Route.about) {
-                Label("About Simply Gurbani", systemImage: "info.circle")
-            }
-            .listRowBackground(AppTheme.Colors.cardBackground)
-
-            Link(destination: URL(string: "https://banidb.com")!) {
-                HStack {
-                    Label("BaniDB API", systemImage: "link")
-                    Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .foregroundStyle(.primary)
-            .listRowBackground(AppTheme.Colors.cardBackground)
-
-            Link(destination: URL(string: "https://github.com/KhsalakFoundation/banidb")!) {
-                HStack {
-                    Label("Source Code", systemImage: "chevron.left.forwardslash.chevron.right")
-                    Spacer()
-                    Image(systemName: "arrow.up.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .foregroundStyle(.primary)
-            .listRowBackground(AppTheme.Colors.cardBackground)
-        } header: {
-            Text("About")
         }
     }
 
@@ -199,12 +187,13 @@ struct SettingsView: View {
             }
             .listRowBackground(AppTheme.Colors.cardBackground)
         } footer: {
-            VStack(spacing: AppTheme.Spacing.sm) {
-                Text("Built with love for the Sangat")
-                    .font(AppTheme.Typography.caption)
+            HStack(spacing: 4) {
+                Text("Built with")
                 Image(systemName: "heart.fill")
                     .foregroundStyle(AppTheme.Colors.saffronFallback)
+                Text("for the Sangat")
             }
+            .font(AppTheme.Typography.caption)
             .frame(maxWidth: .infinity)
             .padding(.top, AppTheme.Spacing.lg)
         }

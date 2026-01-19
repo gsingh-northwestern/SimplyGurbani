@@ -3,8 +3,8 @@ import Foundation
 /// Type-safe navigation routes
 enum Route: Hashable {
     // Reader routes
-    case shabadReader(shabadID: Int)
-    case baniReader(baniID: Int)
+    case shabadReader(shabadID: Int, scrollToVerseID: Int? = nil)
+    case baniReader(baniID: Int, scrollToVerseID: Int? = nil)
     case angReader(ang: Int, sourceID: String)
     case hukamnamaReader(date: Date? = nil)
 

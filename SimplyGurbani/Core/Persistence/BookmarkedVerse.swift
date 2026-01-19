@@ -6,6 +6,7 @@ import SwiftData
 final class BookmarkedVerse {
     @Attribute(.unique) var verseID: Int
     var shabadID: Int
+    var baniID: Int?  // Track which bani this verse is from (if applicable)
     var gurmukhiUnicode: String
     var transliteration: String?
     var translation: String?
@@ -18,6 +19,7 @@ final class BookmarkedVerse {
     init(
         verseID: Int,
         shabadID: Int,
+        baniID: Int? = nil,
         gurmukhiUnicode: String,
         transliteration: String? = nil,
         translation: String? = nil,
@@ -28,6 +30,7 @@ final class BookmarkedVerse {
     ) {
         self.verseID = verseID
         self.shabadID = shabadID
+        self.baniID = baniID
         self.gurmukhiUnicode = gurmukhiUnicode
         self.transliteration = transliteration
         self.translation = translation

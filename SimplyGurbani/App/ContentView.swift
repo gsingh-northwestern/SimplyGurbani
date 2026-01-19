@@ -82,7 +82,7 @@ struct ContentView: View {
     @ViewBuilder
     private func legacyTabView(router: AppRouter) -> some View {
         @Bindable var router = router
-        TabView {
+        TabView(selection: $router.selectedTab) {
             NavigationStack(path: $router.homePath) {
                 HomeView()
                     .navigationDestination(for: Route.self) { route in
@@ -147,10 +147,10 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationView(for route: Route) -> some View {
         switch route {
-        case .shabadReader(let shabadID):
-            ReaderView(shabadID: shabadID)
-        case .baniReader(let baniID):
-            BaniReaderView(baniID: baniID)
+        case .shabadReader(let shabadID, let scrollToVerseID):
+            ReaderView(shabadID: shabadID, scrollToVerseID: scrollToVerseID)
+        case .baniReader(let baniID, let scrollToVerseID):
+            BaniReaderView(baniID: baniID, scrollToVerseID: scrollToVerseID)
         case .hukamnamaReader:
             HukamnamaDetailView()
         case .angPicker(let sourceID):

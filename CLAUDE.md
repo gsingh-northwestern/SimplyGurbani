@@ -67,6 +67,20 @@ NavigationStack(path: $router.browsePath) {
 }
 ```
 
+### Bookmark System
+- `BookmarkedVerse` model stores verse data, shabadID, optional baniID, and folder
+- `BookmarkService` manages CRUD operations for bookmarks
+- Bookmarks from banis include `baniID` for proper navigation
+- Navigation routes include optional `scrollToVerseID` for scroll-to-verse
+- Bookmark navigation prioritizes scroll position over saved reading position
+
+### Reading Position Tracking
+- `ReadingPosition` model tracks scroll position for shabads, banis, and angs
+- `ReadingPositionService` manages reading history (max 20 items)
+- iOS 17's `scrollPosition(id:)` API for automatic position tracking
+- Continue Reading section shows last 3 reading sessions
+- Position restored on navigation: bookmark position > saved position > top
+
 ## API Integration
 - Base URL: `https://api.banidb.com/v2`
 - Key endpoints:
@@ -97,9 +111,16 @@ NavigationStack(path: $router.browsePath) {
 - Gurmukhi fonts: GurbaniAkhar, AnmolLipi (register in Info.plist)
 
 ## Key Files
-- `SimplyGurbani/App/SimplyGurbaniApp.swift` - App entry point
-- `SimplyGurbani/App/ContentView.swift` - Main TabView
-- `SimplyGurbani/Navigation/AppRouter.swift` - Navigation state
+- `SimplyGurbani/App/SimplyGurbaniApp.swift` - App entry point with SwiftData container
+- `SimplyGurbani/App/ContentView.swift` - Main TabView with navigation
+- `SimplyGurbani/Navigation/AppRouter.swift` - Navigation state management
+- `SimplyGurbani/Navigation/Route.swift` - Type-safe navigation routes
+- `SimplyGurbani/Core/Services/BookmarkService.swift` - Bookmark management
+- `SimplyGurbani/Core/Services/ReadingPositionService.swift` - Reading progress tracking
+- `SimplyGurbani/Core/Persistence/BookmarkedVerse.swift` - Bookmark SwiftData model
+- `SimplyGurbani/Core/Persistence/ReadingPosition.swift` - Reading position SwiftData model
+- `SimplyGurbani/Features/Reader/ViewModels/ReaderViewModel.swift` - Reader business logic
+- `SimplyGurbani/Features/Reader/Views/ReaderView.swift` - Shabad/Bani reader UI
 - `SimplyGurbani/DesignSystem/Theme/AppTheme.swift` - Design tokens
 - `SimplyGurbani/DesignSystem/Components/GlassCard.swift` - Glass components
 - `project.yml` - XcodeGen configuration
@@ -140,7 +161,37 @@ NavigationStack(path: $router.browsePath) {
 - [x] Dasam Granth bani category
 - [x] Quick Access icons on Home screen
 - [x] Full-width cards throughout app
+- [x] Bookmark system fully functional (navigation + scroll-to-verse)
+- [x] Reading position tracking and continue reading feature
 - [ ] Additional UI/UX polish
+
+## Recent Changes (v0.8.1)
+- **Settings Data Section**: Fully functional cache and history management
+  - Clear Search History button now shows confirmation alert
+  - Clear Cached Content button clears cache, reading history, and shows confirmation alert
+  - Cache stats display now refreshes immediately after clearing
+  - Added SwiftData integration to SettingsView for reading position access
+
+## Recent Changes (v0.8.0)
+- **Bookmark System Fixes**: Complete overhaul of bookmark navigation for bani verses
+  - Added `baniID: Int?` field to `BookmarkedVerse` model to track verses from banis
+  - Updated `BookmarkService.bookmarkVerse()` to accept and save baniID parameter
+  - Updated `ReaderViewModel` to pass baniID when bookmarking from a bani
+  - Fixed navigation logic in `BookmarksView` to handle both shabads and banis correctly
+  - `BookmarkRow` now displays bani name instead of "Ang 0" for bani verses
+- **Scroll-to-Verse Navigation**: Bookmarks now open to exact verse position
+  - Added `scrollToVerseID: Int?` parameter to `shabadReader` and `baniReader` routes
+  - Updated `ReaderView` and `BaniReaderView` to accept and prioritize scrollToVerseID
+  - Bookmark navigation takes precedence over saved reading position
+  - Clicking a bookmark now scrolls directly to the bookmarked verse
+- **Tab Navigation Fix**: Browse Gurbani button now works correctly
+  - Added `selection: $router.selectedTab` binding to `TabView` in `ContentView.legacyTabView()`
+  - Fixed programmatic tab switching for all empty state "Browse" buttons
+- **Reading Position Tracking**: Automatic scroll position saving and restoration
+  - Created `ReadingPosition` SwiftData model for tracking reading progress
+  - Created `ReadingPositionService` for managing reading history
+  - Updated all reader views to save and restore scroll positions
+  - Continue Reading section on Home screen shows last 3 reading sessions
 
 ## Recent Changes (v0.7.0)
 - **Browse Navigation Fixed**: Browse by Raag and Browse by Writer now work (was showing "Coming Soon")
