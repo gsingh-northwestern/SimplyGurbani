@@ -136,26 +136,19 @@ Use these URLs in App Store Connect.
 
 Located in `/Screenshots/` folder:
 
-### iPhone 6.7" (iPhone 17 Pro Max)
+### iPhone 6.7" (iPhone 17 Pro Max) - 1320x2868
 - `iPhone-6.7/01-Home.png`
 - `iPhone-6.7/02-Reader.png`
 - `iPhone-6.7/03-Browse.png`
 - `iPhone-6.7/04-Search.png`
 - `iPhone-6.7/05-Bookmarks.png`
 
-### iPhone 6.5" (iPhone 16e)
-- `iPhone-6.5/01-Home.png`
-- `iPhone-6.5/02-Reader.png`
-- `iPhone-6.5/03-Browse.png`
-- `iPhone-6.5/04-Search.png`
-- `iPhone-6.5/05-Bookmarks.png`
-
-### iPad Pro 13"
-- `iPad-13/01-Home.png`
-- `iPad-13/02-Reader.png`
-- `iPad-13/03-Browse.png`
-- `iPad-13/04-Search.png`
-- `iPad-13/05-Bookmarks.png`
+### iPad 11" - 1668x2420
+- `iPad-11/01-Home.png`
+- `iPad-11/02-Reader.png`
+- `iPad-11/03-Browse.png`
+- `iPad-11/04-Search.png`
+- `iPad-11/05-Bookmarks.png`
 
 ---
 

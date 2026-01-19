@@ -24,7 +24,7 @@ SimplyGurbani/
 │   ├── Browse/            # Scripture, Bani, Raag lists
 │   ├── Reader/            # Shabad/Bani reader views
 │   ├── Search/            # Search and results
-│   ├── Bookmarks/         # Saved verses
+│   ├── Bookmarks/         # Saved verses, FolderBookmarksView
 │   ├── Settings/          # Preferences
 │   └── Feedback/          # User feedback submission
 ├── Core/
@@ -38,6 +38,15 @@ SimplyGurbani/
 │   └── Modifiers/         # GlassBackground, GurmukhiText
 ├── Navigation/            # AppRouter, Route, TabRoute
 └── Resources/             # Assets, Fonts
+
+docs/                       # GitHub Pages site
+├── index.html             # Landing page
+├── privacy.html           # Privacy policy
+└── app-icon.png           # App icon for web
+
+Screenshots/               # App Store screenshots
+├── iPhone-6.7/           # iPhone 17 Pro Max (1320x2868)
+└── iPad-11/              # iPad 11-inch (1668x2420)
 ```
 
 ## Coding Standards
@@ -122,7 +131,7 @@ NavigationStack(path: $router.browsePath) {
 - `SimplyGurbani/App/SimplyGurbaniApp.swift` - App entry point with SwiftData container
 - `SimplyGurbani/App/ContentView.swift` - Main TabView with navigation
 - `SimplyGurbani/Navigation/AppRouter.swift` - Navigation state management
-- `SimplyGurbani/Navigation/Route.swift` - Type-safe navigation routes
+- `SimplyGurbani/Navigation/Route.swift` - Type-safe navigation routes (includes `bookmarkFolder`)
 - `SimplyGurbani/Core/Models/BaniSections.swift` - Section/chapter data for banis
 - `SimplyGurbani/Core/Services/BookmarkService.swift` - Bookmark management
 - `SimplyGurbani/Core/Services/ReadingPositionService.swift` - Reading progress tracking
@@ -130,11 +139,16 @@ NavigationStack(path: $router.browsePath) {
 - `SimplyGurbani/Core/Persistence/ReadingPosition.swift` - Reading position SwiftData model
 - `SimplyGurbani/Features/Reader/ViewModels/ReaderViewModel.swift` - Reader business logic
 - `SimplyGurbani/Features/Reader/Views/ReaderView.swift` - Shabad/Bani reader UI + SectionPickerSheet
+- `SimplyGurbani/Features/Bookmarks/Views/BookmarksView.swift` - Bookmarks list with folder navigation
+- `SimplyGurbani/Features/Bookmarks/Views/FolderBookmarksView.swift` - Folder contents view
 - `SimplyGurbani/DesignSystem/Theme/AppTheme.swift` - Design tokens
 - `SimplyGurbani/DesignSystem/Components/GlassCard.swift` - Glass components
 - `SimplyGurbani/Features/Feedback/Views/FeedbackView.swift` - Feedback modal sheet
 - `SimplyGurbani/Features/Feedback/Views/FeedbackCard.swift` - Feedback card component
-- `project.yml` - XcodeGen configuration
+- `project.yml` - XcodeGen configuration (Team ID: G39UBPRB4D)
+- `APP_STORE_METADATA.md` - App Store Connect content
+- `PRIVACY_POLICY.md` - Privacy policy document
+- `docs/` - GitHub Pages site files
 
 ## Testing Requirements
 - Unit tests for all ViewModels
@@ -176,7 +190,43 @@ NavigationStack(path: $router.browsePath) {
 - [x] Reading position tracking and continue reading feature
 - [x] Section/chapter navigation for long banis (Japji Sahib)
 - [x] Feedback feature (Home screen card + Settings section)
-- [ ] Additional UI/UX polish
+- [x] App Store submission ready (v1.0.0)
+- [x] GitHub Pages site for privacy policy and support
+
+## Recent Changes (v1.0.0) - App Store Release
+- **App Store Submission**: Complete preparation for App Store release
+  - Version updated to 1.0.0 (build 1)
+  - Team ID configured: G39UBPRB4D
+  - Archive build created and validated
+- **GitHub Pages Site**: Hosted at `https://gsingh-northwestern.github.io/SimplyGurbani/`
+  - Landing page with app info (`docs/index.html`)
+  - Privacy policy page (`docs/privacy.html`)
+  - App icon for web display
+- **App Store Metadata**: Created `APP_STORE_METADATA.md` with:
+  - App description, keywords, promotional text
+  - Support URL and Privacy Policy URL
+  - Screenshot locations and submission checklist
+- **Privacy Policy**: Created `PRIVACY_POLICY.md` documenting:
+  - Local data storage (SwiftData for bookmarks, reading positions)
+  - BaniDB API usage for Gurbani content
+  - No personal data collection, analytics, or ads
+- **Screenshots**: Captured for App Store submission
+  - iPhone 6.7" (iPhone 17 Pro Max): 5 screenshots at 1320x2868
+  - iPad 11": 5 screenshots at 1668x2420
+  - Screens: Home, Reader, Browse, Search, Bookmarks
+- **Folder Navigation Improvement**: Bookmarks folders now use proper page navigation
+  - Created `FolderBookmarksView` as separate navigable view
+  - Added `bookmarkFolder(folderName:)` route
+  - Back button navigation instead of inline filtering
+  - Tap-to-root when re-selecting Bookmarks tab
+- **UI Cleanup**: Removed share function from bani reader toolbar menu
+- **New Files**:
+  - `docs/index.html` - GitHub Pages landing page
+  - `docs/privacy.html` - Privacy policy page
+  - `APP_STORE_METADATA.md` - App Store Connect content
+  - `PRIVACY_POLICY.md` - Privacy policy document
+  - `Screenshots/iPhone-6.7/` - iPhone screenshots
+  - `Screenshots/iPad-11/` - iPad screenshots
 
 ## Recent Changes (v0.10.0)
 - **Feedback Feature**: Users can send feedback via email from Home screen and Settings
@@ -321,10 +371,13 @@ NavigationStack(path: $router.browsePath) {
 - Search implemented with first-letter and full-word modes
 - All data models created matching BaniDB API structure
 
+## App Store URLs
+- **Homepage**: https://gsingh-northwestern.github.io/SimplyGurbani/
+- **Privacy Policy**: https://gsingh-northwestern.github.io/SimplyGurbani/privacy.html
+- **Support**: https://github.com/gsingh-northwestern/SimplyGurbani/issues
+
 ## Next Steps
-- Convert remaining List views (Settings, Search, Bookmarks) to GlassCard style if desired
 - Add dark mode support
-- Test on various device sizes
 - Add localization support
 - Consider adding audio playback for shabads/banis
-- Add sharing functionality improvements
+- Add section navigation to more banis (Sukhmani Sahib, Anand Sahib)
