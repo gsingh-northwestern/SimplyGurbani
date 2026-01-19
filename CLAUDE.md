@@ -174,7 +174,7 @@ NavigationStack(path: $router.browsePath) {
 - [x] ViewModels for Home, Reader, Search features
 - [x] Real Hukamnama from Sri Harmandir Sahib on Home screen
 - [x] Shabad/Bani reader with API integration
-- [x] Search functionality with history and multiple search types
+- [x] Search functionality with auto-detection and combined bani/verse results
 - [x] SwiftData persistence models (BookmarkedVerse, CachedShabad, etc.)
 - [x] Bookmarks feature with folders
 - [x] Enhanced Settings with typography controls
@@ -240,12 +240,26 @@ NavigationStack(path: $router.browsePath) {
   - Burgundy bubble icon with "Send Feedback" title and subtitle
 - **Settings**: Added "Support" section with "Send Feedback" button
   - Same `FeedbackView` modal accessible from Settings tab
+- **Search Improvements**: Smarter, unified search experience
+  - Auto-detects search type: numeric input triggers ang search, text triggers romanized search
+  - Removed manual search type picker - search "just works"
+  - Local bani search: banis are searched by name/transliteration client-side
+  - Combined results: shows matching banis first, then verse results from API
+  - New `BaniSearchResultRow` component for bani results
+  - Updated search tips to reflect new behavior
+- **Reader Enhancements**: Visual bookmark indicators
+  - Verse cards now show burgundy bookmark icon if verse is bookmarked
+  - `isBookmarked` property added to `VerseCardView`
+  - `bookmarkedVerseIDs` set tracked in `ReaderViewModel`
 - **New Files**:
   - `Features/Feedback/Views/FeedbackView.swift` - Feedback modal with category picker and email
   - `Features/Feedback/Views/FeedbackCard.swift` - Reusable card component for Home screen
 - **Updated Files**:
   - `Features/Home/Views/HomeView.swift` - Added FeedbackCard and sheet
   - `Features/Settings/Views/SettingsView.swift` - Added feedbackSection
+  - `Features/Search/ViewModels/SearchViewModel.swift` - Auto search type detection, bani search
+  - `Features/Search/Views/SearchView.swift` - Combined results UI, BaniSearchResultRow
+  - `Features/Reader/Views/ReaderView.swift` - Bookmark indicators on verse cards
 
 ## Recent Changes (v0.9.0)
 - **Bani Section Navigation**: Jump to specific sections/chapters within long banis
