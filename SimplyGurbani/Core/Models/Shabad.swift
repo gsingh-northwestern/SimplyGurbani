@@ -41,12 +41,18 @@ struct Shabad: Identifiable, Hashable, Sendable {
             )
         }
 
-        let raag: Raag? = info.raag.map {
-            Raag(
-                id: $0.raagId,
-                gurmukhi: $0.gurmukhi,
-                gurmukhiUnicode: $0.unicode ?? $0.gurmukhi,  // Fallback to gurmukhi if unicode is null
-                english: $0.english
+        let raag: Raag? = info.raag.flatMap { raagInfo -> Raag? in
+            // Only create Raag if required fields are present
+            guard let raagId = raagInfo.raagId,
+                  let gurmukhi = raagInfo.gurmukhi,
+                  let english = raagInfo.english else {
+                return nil
+            }
+            return Raag(
+                id: raagId,
+                gurmukhi: gurmukhi,
+                gurmukhiUnicode: raagInfo.unicode ?? gurmukhi,
+                english: english
             )
         }
 
@@ -56,7 +62,7 @@ struct Shabad: Identifiable, Hashable, Sendable {
             id: info.shabadId,
             sourceID: info.source.sourceId,
             sourceName: info.source.english,
-            ang: info.pageNo,
+            ang: info.pageNo ?? 0,
             writer: writer,
             raag: raag,
             verses: verses

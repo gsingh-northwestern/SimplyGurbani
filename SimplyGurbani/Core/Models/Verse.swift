@@ -224,7 +224,7 @@ struct ShabadResponse: Codable, Sendable {
 
     struct ShabadInfo: Codable, Sendable {
         let shabadId: Int
-        let pageNo: Int
+        let pageNo: Int?  // Optional - null for non-SGGS sources
         let source: SourceInfo
         let raag: RaagInfo?
         let writer: WriterInfo?
@@ -234,14 +234,14 @@ struct ShabadResponse: Codable, Sendable {
             let gurmukhi: String
             let unicode: String?  // Optional - API can return null
             let english: String
-            let pageNo: Int
+            let pageNo: Int?  // Optional - null for non-SGGS sources
         }
 
         struct RaagInfo: Codable, Sendable {
-            let raagId: Int
-            let gurmukhi: String
+            let raagId: Int?  // Optional - null for non-SGGS sources
+            let gurmukhi: String?  // Optional - null for non-SGGS sources
             let unicode: String?  // Optional - API can return null
-            let english: String
+            let english: String?  // Optional - null for non-SGGS sources
         }
 
         struct WriterInfo: Codable, Sendable {
@@ -261,8 +261,8 @@ struct APIVerse: Codable, Sendable {
     let larivaar: VerseContent?
     let translation: Translation?
     let transliteration: Transliteration?
-    let pageNo: Int
-    let lineNo: Int
+    let pageNo: Int?  // Optional - null for non-SGGS sources
+    let lineNo: Int?  // Optional - null for non-SGGS sources
     let sourceId: String?  // Optional - not present in all API responses
 
     struct VerseContent: Codable, Sendable {
@@ -304,7 +304,7 @@ struct APIVerse: Codable, Sendable {
             transliteration: transliteration?.englishText,
             translation: translation?.en?.bdb ?? translation?.en?.ssk ?? translation?.en?.ms,
             sourceID: sourceId ?? "G",  // Default to SGGS
-            ang: pageNo
+            ang: pageNo ?? 0  // Default to 0 for non-SGGS sources
         )
     }
 }

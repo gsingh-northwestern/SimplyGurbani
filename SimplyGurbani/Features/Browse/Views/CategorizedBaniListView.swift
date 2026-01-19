@@ -61,6 +61,7 @@ struct CategorizedBaniListView: View {
                             baniRowView(bani: bani)
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                         .listRowBackground(AppTheme.Colors.cardBackground)
                     }
                 } header: {
@@ -100,6 +101,7 @@ struct CategorizedBaniListView: View {
                 .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
     }
 
     private func loadBanis() async {

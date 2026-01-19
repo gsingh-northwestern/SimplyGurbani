@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var cacheRefreshTrigger = false
     @State private var showClearedAlert = false
     @State private var clearedAlertMessage = ""
+    @State private var showingFeedback = false
 
     // Display settings
     @AppStorage("showGurmukhi") private var showGurmukhi = true
@@ -21,9 +22,6 @@ struct SettingsView: View {
     @AppStorage("translitFontSize") private var translitFontSize = 16.0
     @AppStorage("translationFontSize") private var translationFontSize = 15.0
 
-    // Search settings
-    @AppStorage("defaultSearchType") private var defaultSearchType = "firstLetter"
-
     // Theme settings
     @AppStorage("prefersDarkMode") private var prefersDarkMode: Bool?
 
@@ -31,8 +29,8 @@ struct SettingsView: View {
         List {
             displaySection
             typographySection
-            searchSection
             cacheSection
+            feedbackSection
             versionSection
         }
         .scrollContentBackground(.hidden)
@@ -42,6 +40,9 @@ struct SettingsView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(clearedAlertMessage)
+        }
+        .sheet(isPresented: $showingFeedback) {
+            FeedbackView()
         }
     }
 
@@ -115,21 +116,6 @@ struct SettingsView: View {
         }
     }
 
-    private var searchSection: some View {
-        Section {
-            Picker("Default Search Mode", selection: $defaultSearchType) {
-                Text("First Letter").tag("firstLetter")
-                Text("Full Word").tag("fullWord")
-                Text("Gurmukhi").tag("gurmukhi")
-            }
-            .listRowBackground(AppTheme.Colors.cardBackground)
-        } header: {
-            Text("Search")
-        } footer: {
-            Text("First Letter search matches the first letters of each word (e.g., 'sngkdjm' finds 'satnam waheguru').")
-        }
-    }
-
     private var cacheSection: some View {
         Section {
             Button("Clear Search History") {
@@ -166,6 +152,27 @@ struct SettingsView: View {
             .id(cacheRefreshTrigger)
         } header: {
             Text("Data")
+        }
+    }
+
+    private var feedbackSection: some View {
+        Section {
+            Button {
+                showingFeedback = true
+            } label: {
+                HStack {
+                    Image(systemName: "bubble.left.fill")
+                        .foregroundStyle(AppTheme.Colors.primaryBurgundy)
+                    Text("Send Feedback")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .foregroundStyle(AppTheme.Colors.accentDarkBlue)
+            .listRowBackground(AppTheme.Colors.cardBackground)
+        } header: {
+            Text("Support")
         }
     }
 

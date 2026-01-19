@@ -21,6 +21,9 @@ enum Route: Hashable {
     // Search routes
     case searchResults(query: String)
 
+    // Bookmark routes
+    case bookmarkFolder(folderName: String)
+
     // Settings routes
     case languageSettings
     case displaySettings

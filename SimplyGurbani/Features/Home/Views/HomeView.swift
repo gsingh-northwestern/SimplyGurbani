@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AppRouter.self) private var router
     @State private var viewModel = HomeViewModel()
+    @State private var showingFeedback = false
 
     var body: some View {
         ScrollView {
@@ -22,6 +23,11 @@ struct HomeView: View {
 
                 // Continue Reading
                 ContinueReadingSection()
+
+                // Feedback Card
+                FeedbackCard(showingFeedback: $showingFeedback)
+                    .padding(.horizontal)
+                    .padding(.top, AppTheme.Spacing.lg)
             }
             .padding(.vertical)
         }
@@ -29,6 +35,9 @@ struct HomeView: View {
         .navigationTitle("Simply Gurbani")
         .task {
             await viewModel.loadHukamnama()
+        }
+        .sheet(isPresented: $showingFeedback) {
+            FeedbackView()
         }
     }
 }

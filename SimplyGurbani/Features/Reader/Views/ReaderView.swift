@@ -96,7 +96,8 @@ struct ReaderView: View {
                         showGurmukhi: showGurmukhi,
                         showTransliteration: showTransliteration,
                         showTranslation: showTranslation,
-                        useLarivaar: useLarivaar
+                        useLarivaar: useLarivaar,
+                        isBookmarked: viewModel.bookmarkedVerseIDs.contains(verse.id)
                     )
                     .id(verse.id)  // Enable scroll position tracking
                 }
@@ -176,12 +177,25 @@ struct BaniReaderView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ReaderViewModel()
     @State private var scrollPosition: Int?  // Track topmost verse ID
+    @State private var showingSectionPicker = false
 
     // Display settings from UserDefaults - synced with Settings
     @AppStorage("showGurmukhi") private var showGurmukhi = true
     @AppStorage("showTransliteration") private var showTransliteration = true
     @AppStorage("showEnglish") private var showTranslation = true
     @AppStorage("useLarivaar") private var useLarivaar = false
+
+    /// Get sections for this bani if available
+    private var sections: [BaniSection]? {
+        BaniSectionData.sections(for: baniID)
+    }
+
+    /// Find the current section based on scroll position
+    private var currentSection: BaniSection? {
+        guard let sections = sections, let position = scrollPosition else { return nil }
+        // Find the section whose startVerseID is <= current position
+        return sections.last { $0.startVerseID <= position }
+    }
 
     init(baniID: Int, scrollToVerseID: Int? = nil) {
         self.baniID = baniID
@@ -213,12 +227,29 @@ struct BaniReaderView: View {
         .navigationTitle(viewModel.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if sections != nil {
+                ToolbarItem(placement: .topBarLeading) {
+                    sectionPickerButton
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 toolbarMenu
             }
             ToolbarItem(placement: .topBarTrailing) {
                 bookmarkButton
             }
+        }
+        .sheet(isPresented: $showingSectionPicker) {
+            SectionPickerSheet(
+                sections: sections ?? [],
+                currentSection: currentSection,
+                onSelect: { section in
+                    scrollToSection(section)
+                    showingSectionPicker = false
+                }
+            )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .task {
             await viewModel.loadBani(id: baniID)
@@ -236,6 +267,28 @@ struct BaniReaderView: View {
         .onChange(of: scrollPosition) { oldValue, newValue in
             if let newValue = newValue {
                 viewModel.saveScrollPosition(newValue)
+            }
+        }
+    }
+
+    private var sectionPickerButton: some View {
+        Button {
+            showingSectionPicker = true
+        } label: {
+            Image(systemName: "list.bullet")
+        }
+    }
+
+    private func scrollToSection(_ section: BaniSection) {
+        // Find the closest valid verse ID in the loaded verses
+        if let targetVerse = viewModel.verses.first(where: { $0.id >= section.startVerseID }) {
+            withAnimation {
+                scrollPosition = targetVerse.id
+            }
+        } else if let firstVerse = viewModel.verses.first {
+            // Fallback to first verse if section not found
+            withAnimation {
+                scrollPosition = firstVerse.id
             }
         }
     }
@@ -279,7 +332,8 @@ struct BaniReaderView: View {
                         showGurmukhi: showGurmukhi,
                         showTransliteration: showTransliteration,
                         showTranslation: showTranslation,
-                        useLarivaar: useLarivaar
+                        useLarivaar: useLarivaar,
+                        isBookmarked: viewModel.bookmarkedVerseIDs.contains(verse.id)
                     )
                     .id(verse.id)  // Enable scroll position tracking
                 }
@@ -296,12 +350,6 @@ struct BaniReaderView: View {
             Toggle("Transliteration", isOn: $showTransliteration)
             Toggle("Translation", isOn: $showTranslation)
             Toggle("Larivaar", isOn: $useLarivaar)
-
-            Divider()
-
-            ShareLink(item: viewModel.shareText(showTransliteration: showTransliteration, showTranslation: showTranslation)) {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
         } label: {
             Image(systemName: "ellipsis.circle")
         }
@@ -314,12 +362,23 @@ struct VerseCardView: View {
     let showTransliteration: Bool
     let showTranslation: Bool
     let useLarivaar: Bool
+    var isBookmarked: Bool = false
 
     @AppStorage("gurmukhiFontSize") private var gurmukhiFontSize = 24.0
 
     var body: some View {
         GlassCard {
             VStack(spacing: AppTheme.Spacing.md) {
+                // Bookmark indicator at top
+                if isBookmarked {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "bookmark.fill")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.Colors.primaryBurgundy)
+                    }
+                }
+
                 if showGurmukhi {
                     Text(useLarivaar ? (verse.larivaarUnicode ?? verse.gurmukhiUnicode) : verse.gurmukhiUnicode)
                         .font(.system(size: gurmukhiFontSize))
@@ -344,6 +403,10 @@ struct VerseCardView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(isBookmarked ? AppTheme.Colors.primaryBurgundy : Color.clear, lineWidth: 2)
+        )
     }
 }
 
@@ -426,6 +489,66 @@ struct HukamnamaDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadHukamnama()
+        }
+    }
+}
+
+// MARK: - Section Picker Sheet
+
+struct SectionPickerSheet: View {
+    let sections: [BaniSection]
+    let currentSection: BaniSection?
+    let onSelect: (BaniSection) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollViewReader { proxy in
+                List(sections) { section in
+                    Button {
+                        onSelect(section)
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(section.gurmukhiName)
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(AppTheme.Colors.textPrimary)
+
+                                Text(section.name)
+                                    .font(AppTheme.Typography.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            if section.id == currentSection?.id {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(AppTheme.Colors.saffronFallback)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .id(section.id)
+                }
+                .listStyle(.plain)
+                .onAppear {
+                    // Scroll to current section
+                    if let current = currentSection {
+                        proxy.scrollTo(current.id, anchor: .center)
+                    }
+                }
+            }
+            .navigationTitle("Jump to Section")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
         }
     }
 }

@@ -94,11 +94,12 @@ struct SearchViewModelTests {
         let viewModel = SearchViewModel()
 
         #expect(viewModel.searchText.isEmpty)
-        #expect(viewModel.results.isEmpty)
+        #expect(viewModel.baniResults.isEmpty)
+        #expect(viewModel.verseResults.isEmpty)
         #expect(viewModel.isSearching == false)
         #expect(viewModel.error == nil)
-        #expect(viewModel.searchType == .firstLetter)
         #expect(viewModel.hasSearched == false)
+        #expect(viewModel.hasResults == false)
     }
 
     @Test("Clear results resets state")
@@ -109,21 +110,10 @@ struct SearchViewModelTests {
 
         viewModel.clearResults()
 
-        #expect(viewModel.results.isEmpty)
+        #expect(viewModel.baniResults.isEmpty)
+        #expect(viewModel.verseResults.isEmpty)
         #expect(viewModel.hasSearched == false)
         #expect(viewModel.error == nil)
-    }
-
-    @Test("Search type changes correctly")
-    @MainActor
-    func searchTypeChange() {
-        let viewModel = SearchViewModel()
-
-        viewModel.searchType = .fullWord
-        #expect(viewModel.searchType == .fullWord)
-
-        viewModel.searchType = .romanized
-        #expect(viewModel.searchType == .romanized)
     }
 
     @Test("Clear history removes all items")
@@ -151,10 +141,6 @@ struct ReaderViewModelTests {
         #expect(viewModel.baniContent == nil)
         #expect(viewModel.isLoading == false)
         #expect(viewModel.error == nil)
-        #expect(viewModel.showGurmukhi == true)
-        #expect(viewModel.showTransliteration == true)
-        #expect(viewModel.showTranslation == true)
-        #expect(viewModel.useLarivaar == false)
     }
 
     @Test("Verses returns empty when no content")
@@ -178,7 +164,7 @@ struct ReaderViewModelTests {
     func shareTextEmpty() {
         let viewModel = ReaderViewModel()
 
-        let text = viewModel.shareText()
+        let text = viewModel.shareText(showTransliteration: true, showTranslation: true)
 
         #expect(text.isEmpty)
     }
@@ -189,21 +175,6 @@ struct ReaderViewModelTests {
         let viewModel = ReaderViewModel()
 
         #expect(viewModel.isFirstVerseBookmarked == false)
-    }
-
-    @Test("Display settings can be toggled")
-    @MainActor
-    func toggleDisplaySettings() {
-        let viewModel = ReaderViewModel()
-
-        viewModel.showGurmukhi = false
-        #expect(viewModel.showGurmukhi == false)
-
-        viewModel.showTransliteration = false
-        #expect(viewModel.showTransliteration == false)
-
-        viewModel.useLarivaar = true
-        #expect(viewModel.useLarivaar == true)
     }
 }
 

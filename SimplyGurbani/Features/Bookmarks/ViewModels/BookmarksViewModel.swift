@@ -90,4 +90,10 @@ final class BookmarksViewModel {
     var bookmarkCount: Int {
         bookmarkService?.bookmarkCount ?? 0
     }
+
+    /// Bookmarks that are not in any folder
+    var unfiledBookmarks: [BookmarkedVerse] {
+        guard let service = bookmarkService else { return [] }
+        return service.getBookmarks(in: nil)
+    }
 }

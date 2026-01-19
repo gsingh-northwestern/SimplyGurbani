@@ -82,7 +82,18 @@ struct ContentView: View {
     @ViewBuilder
     private func legacyTabView(router: AppRouter) -> some View {
         @Bindable var router = router
-        TabView(selection: $router.selectedTab) {
+        let tabBinding = Binding<TabRoute>(
+            get: { router.selectedTab },
+            set: { newTab in
+                // If tapping same tab, pop to root
+                if newTab == router.selectedTab {
+                    router.popToRoot()
+                } else {
+                    router.selectedTab = newTab
+                }
+            }
+        )
+        TabView(selection: tabBinding) {
             NavigationStack(path: $router.homePath) {
                 HomeView()
                     .navigationDestination(for: Route.self) { route in
@@ -167,6 +178,8 @@ struct ContentView: View {
             RaagListView()
         case .writerList:
             WriterListView()
+        case .bookmarkFolder(let folderName):
+            FolderBookmarksView(folderName: folderName)
         default:
             Text("Coming Soon")
         }

@@ -10,11 +10,13 @@
 		0295F45CBF16ABC42C5BD52C /* BookmarksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519704B5A98F3ECB8569AB61 /* BookmarksViewModel.swift */; };
 		06567912E0C855BA6B7A3812 /* Raag.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CC837E9E17BFDD3EBF22F2 /* Raag.swift */; };
 		11B77435FA5AD73F5D2A4447 /* Bani.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158AD8D96FA964348CBFABFE /* Bani.swift */; };
+		2AEB6B8768ECDEDC4EA3813A /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5D7282B486A20351B0A0D0 /* FeedbackView.swift */; };
 		2DF6CC8A2D23395D329B2278 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFACEA71394C57FBA97F66D8 /* SearchViewModel.swift */; };
 		2E0C80044F98376F96F5ED28 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829519F7F52FD851E84C3FDF /* ContentView.swift */; };
 		2F8AA23D1AEEC280E5161186 /* GlassBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C4944D30BFA848C8A0680D /* GlassBackgroundModifier.swift */; };
 		361237677FE0BF6E23DCA216 /* Hukamnama.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19FA74AD435DBA4A12EE9E2C /* Hukamnama.swift */; };
 		4BC8F4842BE60438F41A4876 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECCD601C9D8356DDD0CFBAB /* ViewModelTests.swift */; };
+		6212BF574C1CE1789A5D4B9E /* BaniSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E8371645CECBFDCCEED42E /* BaniSections.swift */; };
 		62BE98D7814179D62AAFA837 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528D9D3BABF2969B3155247C /* APIError.swift */; };
 		693C00C0B120F343C8D453BE /* CachedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84867F3AE4EB630A0E36F153 /* CachedContent.swift */; };
 		6C82099A8AD31D9800D8177C /* BookmarkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAF385349EA023AEEBE06E7 /* BookmarkService.swift */; };
@@ -28,6 +30,7 @@
 		7FDFF144EAA785904A354C22 /* SimplyGurbaniTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3970AD71FA2BD14E4BCED5 /* SimplyGurbaniTests.swift */; };
 		80C7A05AAF592AAB546887C3 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EDFD0E96058C90166FECD8 /* CacheService.swift */; };
 		9111A3C83188797EB220E07A /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4978B7C51B0FA1BC5A8A297F /* SearchResult.swift */; };
+		9BB6A27BF4236749CFD16635 /* FeedbackCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB76A4CC47D1C98C6E020D56 /* FeedbackCard.swift */; };
 		9D05EFF8C1FA7DDBE7F7A328 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C10F2ECAE615420A1CF93B1 /* BrowseView.swift */; };
 		AA1E9F2B23A31BC11400D250 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76777E28223B52B6AD08D8E2 /* APIClient.swift */; };
 		AB799D533E6430796CA22EED /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF166A8D44EC3D710A131C67 /* ReaderView.swift */; };
@@ -104,10 +107,13 @@
 		BC851F0A890C2E9BE7EF0325 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		BFB14529948DEBA602161178 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C09E3E9671D06DF1C3FB66BD /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
+		CB76A4CC47D1C98C6E020D56 /* FeedbackCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackCard.swift; sourceTree = "<group>"; };
 		D10F4E57D7DAD053F1FF2F29 /* ContinueReadingSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueReadingSection.swift; sourceTree = "<group>"; };
 		D96A28B535C2D74148E4DC36 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		DBA589DF39676C17A9086C2F /* Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Verse.swift; sourceTree = "<group>"; };
+		DD5D7282B486A20351B0A0D0 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		DFACEA71394C57FBA97F66D8 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		E8E8371645CECBFDCCEED42E /* BaniSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaniSections.swift; sourceTree = "<group>"; };
 		ED3970AD71FA2BD14E4BCED5 /* SimplyGurbaniTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplyGurbaniTests.swift; sourceTree = "<group>"; };
 		F1CC837E9E17BFDD3EBF22F2 /* Raag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Raag.swift; sourceTree = "<group>"; };
 		F43449E16467F49AEB56864D /* Writer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Writer.swift; sourceTree = "<group>"; };
@@ -255,6 +261,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		8CE65936D3502CE5E627FC56 /* Feedback */ = {
+			isa = PBXGroup;
+			children = (
+				F83CD37AE917FD4CB39A76CF /* Views */,
+			);
+			path = Feedback;
+			sourceTree = "<group>";
+		};
 		917A81EFD35E6B81DBCA2A64 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,6 +317,7 @@
 			children = (
 				158AD8D96FA964348CBFABFE /* Bani.swift */,
 				6A7734D37E9F381767E07702 /* BaniCategory.swift */,
+				E8E8371645CECBFDCCEED42E /* BaniSections.swift */,
 				19FA74AD435DBA4A12EE9E2C /* Hukamnama.swift */,
 				F1CC837E9E17BFDD3EBF22F2 /* Raag.swift */,
 				4978B7C51B0FA1BC5A8A297F /* SearchResult.swift */,
@@ -393,6 +408,7 @@
 			children = (
 				10781647A3A9C00A0DD02B10 /* Bookmarks */,
 				CE341E3A30F15A40123F3FFC /* Browse */,
+				8CE65936D3502CE5E627FC56 /* Feedback */,
 				A7D2EBDC60E38ACDA140936B /* Home */,
 				B0681116FF5A779A0054E063 /* Reader */,
 				B37AD8CECF74278578E0B33E /* Search */,
@@ -462,6 +478,15 @@
 				A326024D5C84F1342434857B /* HomeViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F83CD37AE917FD4CB39A76CF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CB76A4CC47D1C98C6E020D56 /* FeedbackCard.swift */,
+				DD5D7282B486A20351B0A0D0 /* FeedbackView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		FAA757002207223C5B315963 /* Views */ = {
@@ -589,6 +614,7 @@
 				AC217B5E3501D65222FB53CC /* AppTheme.swift in Sources */,
 				11B77435FA5AD73F5D2A4447 /* Bani.swift in Sources */,
 				C2AA040F9035B448D233C017 /* BaniCategory.swift in Sources */,
+				6212BF574C1CE1789A5D4B9E /* BaniSections.swift in Sources */,
 				6C82099A8AD31D9800D8177C /* BookmarkService.swift in Sources */,
 				E692A9829BFD24B613E296BB /* BookmarkedVerse.swift in Sources */,
 				AFC9C53E0D972A1206531A4F /* BookmarksView.swift in Sources */,
@@ -599,6 +625,8 @@
 				BDF665D2BFAF4A2D3CF81F38 /* CategorizedBaniListView.swift in Sources */,
 				2E0C80044F98376F96F5ED28 /* ContentView.swift in Sources */,
 				6CF5C57E0094FEC80B94AE7A /* ContinueReadingSection.swift in Sources */,
+				9BB6A27BF4236749CFD16635 /* FeedbackCard.swift in Sources */,
+				2AEB6B8768ECDEDC4EA3813A /* FeedbackView.swift in Sources */,
 				2F8AA23D1AEEC280E5161186 /* GlassBackgroundModifier.swift in Sources */,
 				C7818389B0B801582F780D97 /* GlassCard.swift in Sources */,
 				DBC9255F2308E73AEE2AEC41 /* GurbaniService.swift in Sources */,

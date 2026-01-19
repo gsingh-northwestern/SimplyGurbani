@@ -25,7 +25,8 @@ SimplyGurbani/
 │   ├── Reader/            # Shabad/Bani reader views
 │   ├── Search/            # Search and results
 │   ├── Bookmarks/         # Saved verses
-│   └── Settings/          # Preferences
+│   ├── Settings/          # Preferences
+│   └── Feedback/          # User feedback submission
 ├── Core/
 │   ├── Models/            # Domain models (Verse, Shabad, Bani, etc.)
 │   ├── Networking/        # APIClient, Endpoints
@@ -93,6 +94,13 @@ NavigationStack(path: $router.browsePath) {
 - All network calls go through `APIClient` actor
 - Responses cached using SwiftData for offline access
 
+### API Model Considerations
+- **Be defensive with optionals**: BaniDB API may return `null` for fields that seem required
+- `unicode` fields can be `null` - always use `String?` and provide fallback to `gurmukhi`
+- Translation structures vary by language: `en` uses flat strings, `pu`/`es` use nested dicts
+- `sourceId` may be missing from verse objects in some endpoints
+- Test API responses with actual endpoint calls before finalizing Codable models
+
 ## Design System
 
 ### Color Palette
@@ -115,14 +123,17 @@ NavigationStack(path: $router.browsePath) {
 - `SimplyGurbani/App/ContentView.swift` - Main TabView with navigation
 - `SimplyGurbani/Navigation/AppRouter.swift` - Navigation state management
 - `SimplyGurbani/Navigation/Route.swift` - Type-safe navigation routes
+- `SimplyGurbani/Core/Models/BaniSections.swift` - Section/chapter data for banis
 - `SimplyGurbani/Core/Services/BookmarkService.swift` - Bookmark management
 - `SimplyGurbani/Core/Services/ReadingPositionService.swift` - Reading progress tracking
 - `SimplyGurbani/Core/Persistence/BookmarkedVerse.swift` - Bookmark SwiftData model
 - `SimplyGurbani/Core/Persistence/ReadingPosition.swift` - Reading position SwiftData model
 - `SimplyGurbani/Features/Reader/ViewModels/ReaderViewModel.swift` - Reader business logic
-- `SimplyGurbani/Features/Reader/Views/ReaderView.swift` - Shabad/Bani reader UI
+- `SimplyGurbani/Features/Reader/Views/ReaderView.swift` - Shabad/Bani reader UI + SectionPickerSheet
 - `SimplyGurbani/DesignSystem/Theme/AppTheme.swift` - Design tokens
 - `SimplyGurbani/DesignSystem/Components/GlassCard.swift` - Glass components
+- `SimplyGurbani/Features/Feedback/Views/FeedbackView.swift` - Feedback modal sheet
+- `SimplyGurbani/Features/Feedback/Views/FeedbackCard.swift` - Feedback card component
 - `project.yml` - XcodeGen configuration
 
 ## Testing Requirements
@@ -163,7 +174,54 @@ NavigationStack(path: $router.browsePath) {
 - [x] Full-width cards throughout app
 - [x] Bookmark system fully functional (navigation + scroll-to-verse)
 - [x] Reading position tracking and continue reading feature
+- [x] Section/chapter navigation for long banis (Japji Sahib)
+- [x] Feedback feature (Home screen card + Settings section)
 - [ ] Additional UI/UX polish
+
+## Recent Changes (v0.10.0)
+- **Feedback Feature**: Users can send feedback via email from Home screen and Settings
+  - New `FeedbackView` modal sheet with category picker (Bug Report, Feature Request, General Feedback, Other)
+  - Text editor for message input
+  - Opens device's email client with pre-filled recipient, subject, and body
+  - Recipient: `gsingh.honsla@gmail.com`
+  - Subject format: `Simply Gurbani - [Category]`
+- **Home Screen**: Added `FeedbackCard` at bottom of scroll view
+  - Uses `GlassCard` for consistent styling
+  - Burgundy bubble icon with "Send Feedback" title and subtitle
+- **Settings**: Added "Support" section with "Send Feedback" button
+  - Same `FeedbackView` modal accessible from Settings tab
+- **New Files**:
+  - `Features/Feedback/Views/FeedbackView.swift` - Feedback modal with category picker and email
+  - `Features/Feedback/Views/FeedbackCard.swift` - Reusable card component for Home screen
+- **Updated Files**:
+  - `Features/Home/Views/HomeView.swift` - Added FeedbackCard and sheet
+  - `Features/Settings/Views/SettingsView.swift` - Added feedbackSection
+
+## Recent Changes (v0.9.0)
+- **Bani Section Navigation**: Jump to specific sections/chapters within long banis
+  - New `BaniSection` model and `BaniSectionData` enum for section mappings
+  - Section picker sheet accessible from toolbar in BaniReaderView
+  - Shows current section indicator in toolbar button
+  - Smooth scroll-to-section with animation
+  - **Japji Sahib**: All 38 pauris + Mool Mantar, Jap, and Saloks mapped with verified verse IDs
+  - Architecture supports adding more banis (Sukhmani Sahib, Anand Sahib, etc.)
+- **New Files**:
+  - `Core/Models/BaniSections.swift` - Section data structures and mappings
+- **Updated Files**:
+  - `Features/Reader/Views/ReaderView.swift` - Added `SectionPickerSheet` and section navigation UI
+
+## Recent Changes (v0.8.2)
+- **Hukamnama Decoding Fix**: Fixed critical bug where clicking Hukamnama card caused decoding errors
+  - Root cause: Hukamnama card navigates to Shabad Reader using `/v2/shabads/:id` endpoint
+  - `ShabadResponse` model had several required fields that API returns as `null`
+  - **Fixes in `Verse.swift`**:
+    - Made `unicode` optional in `ShabadResponse.ShabadInfo.WriterInfo` - API can return null
+    - Made `unicode` optional in `ShabadResponse.ShabadInfo.RaagInfo` - API can return null
+    - Made `unicode` optional in `ShabadResponse.ShabadInfo.SourceInfo` - API can return null
+    - Removed `pu` (Punjabi) and `es` (Spanish) from `APIVerse.Translation` - different structure (nested dicts vs strings)
+    - Made `sourceId` optional in `APIVerse` - not present in shabad endpoint responses
+  - **Fixes in `Shabad.swift`**:
+    - Added fallback `$0.unicode ?? $0.gurmukhi` when creating Writer/Raag from response
 
 ## Recent Changes (v0.8.1)
 - **Settings Data Section**: Fully functional cache and history management

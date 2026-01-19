@@ -22,8 +22,8 @@ struct SimplyGurbaniTests {
         router.navigateToShabad(123)
 
         #expect(router.browsePath.count == 1)
-        if case .shabadReader(let id) = router.browsePath.first {
-            #expect(id == 123)
+        if case .shabadReader(let shabadID, _) = router.browsePath.first {
+            #expect(shabadID == 123)
         } else {
             Issue.record("Expected shabadReader route")
         }

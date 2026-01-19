@@ -53,6 +53,22 @@ final class BookmarkService {
         return count > 0
     }
 
+    /// Check if a bani has any bookmarked verses
+    func hasBaniBookmarks(baniID: Int) -> Bool {
+        let descriptor = FetchDescriptor<BookmarkedVerse>(
+            predicate: #Predicate { $0.baniID == baniID }
+        )
+        let count = (try? modelContext.fetchCount(descriptor)) ?? 0
+        return count > 0
+    }
+
+    /// Get all bani IDs that have bookmarks
+    func getBookmarkedBaniIDs() -> Set<Int> {
+        let descriptor = FetchDescriptor<BookmarkedVerse>()
+        guard let bookmarks = try? modelContext.fetch(descriptor) else { return [] }
+        return Set(bookmarks.compactMap { $0.baniID })
+    }
+
     /// Get all bookmarks
     func getAllBookmarks() -> [BookmarkedVerse] {
         let descriptor = FetchDescriptor<BookmarkedVerse>(

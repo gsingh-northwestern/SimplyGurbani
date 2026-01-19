@@ -58,25 +58,14 @@ struct SearchView: View {
 
             Section {
                 VStack(alignment: .leading, spacing: 12) {
-                    searchTip(icon: "character.textbox", text: "Type Gurmukhi or transliteration")
-                    searchTip(icon: "textformat.abc", text: "Use first letters (e.g., 'sngkdjm')")
+                    searchTip(icon: "book.closed", text: "Search banis by name (e.g., 'Japji')")
+                    searchTip(icon: "textformat.abc", text: "Search verses in romanized text")
                     searchTip(icon: "number", text: "Enter ang number to jump to page")
                 }
                 .padding(.vertical, 8)
                 .listRowBackground(AppTheme.Colors.cardBackground)
             } header: {
                 Text("Search Tips")
-            }
-
-            Section {
-                Picker("Search Type", selection: $viewModel.searchType) {
-                    ForEach(SearchType.allCases, id: \.rawValue) { type in
-                        Text(type.displayName).tag(type)
-                    }
-                }
-                .listRowBackground(AppTheme.Colors.cardBackground)
-            } header: {
-                Text("Search Mode")
             }
         }
         .scrollContentBackground(.hidden)
@@ -109,7 +98,7 @@ struct SearchView: View {
                         Task { await viewModel.search() }
                     }
                 }
-            } else if viewModel.results.isEmpty {
+            } else if !viewModel.hasResults {
                 ContentUnavailableView {
                     Label("No Results", systemImage: "magnifyingglass")
                 } description: {
@@ -121,28 +110,59 @@ struct SearchView: View {
                     }
                 }
             } else {
-                List {
-                    Section {
-                        Text("\(viewModel.results.count) results")
-                            .font(AppTheme.Typography.caption)
-                            .foregroundStyle(.secondary)
-                            .listRowBackground(AppTheme.Colors.cardBackground)
-                    }
+                resultsListView
+            }
+        }
+    }
 
-                    ForEach(viewModel.results) { result in
+    private var resultsListView: some View {
+        List {
+            // Results count header
+            Section {
+                Text("\(viewModel.totalResultCount) results")
+                    .font(AppTheme.Typography.caption)
+                    .foregroundStyle(.secondary)
+                    .listRowBackground(AppTheme.Colors.cardBackground)
+            }
+
+            // Banis section (if any)
+            if !viewModel.baniResults.isEmpty {
+                Section {
+                    ForEach(viewModel.baniResults) { bani in
+                        Button {
+                            router.searchPath.append(.baniReader(baniID: bani.id))
+                        } label: {
+                            BaniSearchResultRow(bani: bani)
+                        }
+                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .listRowBackground(AppTheme.Colors.cardBackground)
+                    }
+                } header: {
+                    Text("Banis")
+                }
+            }
+
+            // Verses section (if any)
+            if !viewModel.verseResults.isEmpty {
+                Section {
+                    ForEach(viewModel.verseResults) { result in
                         Button {
                             router.searchPath.append(.shabadReader(shabadID: result.shabadID))
                         } label: {
                             SearchResultRow(result: result)
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                         .listRowBackground(AppTheme.Colors.cardBackground)
                     }
+                } header: {
+                    Text("Verses")
                 }
-                .scrollContentBackground(.hidden)
-                .background(AppTheme.Colors.backgroundBeige)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.Colors.backgroundBeige)
     }
 }
 
@@ -182,6 +202,30 @@ struct SearchResultRow: View {
     }
 }
 
+struct BaniSearchResultRow: View {
+    let bani: Bani
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(bani.gurmukhiUnicode)
+                .font(.system(size: 18))
+
+            Text(bani.displayName)
+                .font(AppTheme.Typography.subheadline)
+                .foregroundStyle(.secondary)
+
+            HStack {
+                Image(systemName: "book.closed.fill")
+                    .foregroundStyle(AppTheme.Colors.saffronFallback)
+                Text("Bani")
+                    .font(AppTheme.Typography.caption)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 struct SearchResultsView: View {
     let query: String
     @Environment(AppRouter.self) private var router
@@ -191,10 +235,10 @@ struct SearchResultsView: View {
         Group {
             if viewModel.isSearching {
                 ProgressView("Searching...")
-            } else if viewModel.results.isEmpty {
+            } else if !viewModel.hasResults {
                 ContentUnavailableView.search(text: query)
             } else {
-                List(viewModel.results) { result in
+                List(viewModel.verseResults) { result in
                     Button {
                         router.searchPath.append(.shabadReader(shabadID: result.shabadID))
                     } label: {
