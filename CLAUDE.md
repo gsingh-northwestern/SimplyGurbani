@@ -198,7 +198,7 @@ NavigationStack(path: $router.browsePath) {
   - Version updated to 1.0.0 (build 1)
   - Team ID configured: G39UBPRB4D
   - Archive build created and validated
-- **GitHub Pages Site**: Hosted at `https://gsingh-northwestern.github.io/SimplyGurbani/`
+- **GitHub Pages Site**: Hosted at `https://gsingh-honsla.github.io/SimplyGurbani/`
   - Landing page with app info (`docs/index.html`)
   - Privacy policy page (`docs/privacy.html`)
   - App icon for web display
@@ -386,9 +386,9 @@ NavigationStack(path: $router.browsePath) {
 - All data models created matching BaniDB API structure
 
 ## App Store URLs
-- **Homepage**: https://gsingh-northwestern.github.io/SimplyGurbani/
-- **Privacy Policy**: https://gsingh-northwestern.github.io/SimplyGurbani/privacy.html
-- **Support**: https://github.com/gsingh-northwestern/SimplyGurbani/issues
+- **Homepage**: https://gsingh-honsla.github.io/SimplyGurbani/
+- **Privacy Policy**: https://gsingh-honsla.github.io/SimplyGurbani/privacy.html
+- **Support**: https://github.com/gsingh-honsla/SimplyGurbani/issues
 
 ## Next Steps
 - Add dark mode support

@@ -119,13 +119,13 @@ Waheguru Ji Ka Khalsa, Waheguru Ji Ki Fateh!
 ## Support URL
 
 ```
-https://gsingh-northwestern.github.io/SimplyGurbani/
+https://gsingh-honsla.github.io/SimplyGurbani/
 ```
 
 ## Privacy Policy URL
 
 ```
-https://gsingh-northwestern.github.io/SimplyGurbani/privacy.html
+https://gsingh-honsla.github.io/SimplyGurbani/privacy.html
 ```
 
 Use these URLs in App Store Connect.
